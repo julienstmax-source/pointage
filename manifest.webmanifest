@@ -1,0 +1,26 @@
+{
+ "name": "EASE — Pointage",
+ "short_name": "Pointage",
+ "description": "Outil de pointage EASE (version de test, données fictives)",
+ "start_url": "./",
+ "scope": "./",
+ "id": "./",
+ "display": "standalone",
+ "orientation": "portrait",
+ "background_color": "#0f1d30",
+ "theme_color": "#0f1d30",
+ "lang": "fr",
+ "icons": [
+  {
+   "src": "./icon-192.png",
+   "sizes": "192x192",
+   "type": "image/png"
+  },
+  {
+   "src": "./icon-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "any"
+  }
+ ]
+}
