@@ -788,6 +788,8 @@ const I={
     r_noproj:'Aucun projet actif pour l’instant. Demande à un administrateur d’en créer.',r_noproj_adm:'Aucun projet actif. Crée-en un dans Projets.',
     r_rien:'Rien à répartir.',r_saved:'Enregistré',
     ed_new:'Nouveau pointage',ed_edit:'Pointage',f_jour:'Jour',f_entree:'Arrivée',f_sortie:'Départ',
+    f_sortie_oubli:'Indique l’heure à laquelle tu es réellement parti(e) ; ton responsable la verra à la validation.',err_sortie:'Indique l’heure de sortie.',
+    j_corr_pc:'Une erreur dans tes pointages ? Ton responsable la corrige sur ordinateur.',m_gest_pc:'Validation, demandes à décider et paramètres : sur ordinateur.',
     f_sortie_vide:'Laisse le départ vide si la personne est encore en poste.',f_note:'Note',f_lendemain:'départ le lendemain',f_duree:'Durée : {d}',
     f_motif:'Motif de la correction',f_motif_ph:'Ex. oubli de pointage confirmé',motif:'Motif',derniere_corr:'Dernière correction par {n} : {m}',
     save:'Enregistrer',cancel:'Annuler',del:'Supprimer',close:'Fermer',confirm:'Confirmer',confirm_del:'Supprimer ce pointage ?',confirm_del_proj:'Supprimer ce projet ?',
@@ -914,6 +916,8 @@ const I={
     r_noproj:'Nessun progetto attivo per ora. Chiedi a un amministratore di crearne.',r_noproj_adm:'Nessun progetto attivo. Creane uno in Progetti.',
     r_rien:'Niente da ripartire.',r_saved:'Salvato',
     ed_new:'Nuova timbratura',ed_edit:'Timbratura',f_jour:'Giorno',f_entree:'Entrata',f_sortie:'Uscita',
+    f_sortie_oubli:'Indica l’ora in cui sei davvero uscito/a; il tuo responsabile la vedrà alla convalida.',err_sortie:'Indica l’ora di uscita.',
+    j_corr_pc:'Un errore nelle tue timbrature? Lo corregge il tuo responsabile dal computer.',m_gest_pc:'Convalida, richieste da decidere e parametri: dal computer.',
     f_sortie_vide:'Lascia vuota l’uscita se la persona è ancora in servizio.',f_note:'Nota',f_lendemain:'uscita il giorno dopo',f_duree:'Durata: {d}',
     f_motif:'Motivo della correzione',f_motif_ph:'Es. timbratura dimenticata, confermata',motif:'Motivo',derniere_corr:'Ultima correzione di {n}: {m}',
     save:'Salva',cancel:'Annulla',del:'Elimina',close:'Chiudi',confirm:'Conferma',confirm_del:'Eliminare questa timbratura?',confirm_del_proj:'Eliminare questo progetto?',
@@ -1040,6 +1044,8 @@ const I={
     r_noproj:'No active project yet. Ask an administrator to create some.',r_noproj_adm:'No active project. Create one in Projects.',
     r_rien:'Nothing left to allocate.',r_saved:'Saved',
     ed_new:'New entry',ed_edit:'Entry',f_jour:'Day',f_entree:'In',f_sortie:'Out',
+    f_sortie_oubli:'Enter the time you actually left; your manager will see it when validating.',err_sortie:'Enter the clock-out time.',
+    j_corr_pc:'A mistake in your punches? Your manager corrects it on a computer.',m_gest_pc:'Validation, requests to decide and settings: on a computer.',
     f_sortie_vide:'Leave Out empty if the person is still on duty.',f_note:'Note',f_lendemain:'out the next day',f_duree:'Duration: {d}',
     f_motif:'Reason for the correction',f_motif_ph:'E.g. forgotten clock-in, confirmed',motif:'Reason',derniere_corr:'Last corrected by {n}: {m}',
     save:'Save',cancel:'Cancel',del:'Delete',close:'Close',confirm:'Confirm',confirm_del:'Delete this entry?',confirm_del_proj:'Delete this project?',
@@ -1290,7 +1296,7 @@ function minutesAbsenceJour(rq,iso){
 }
 
 // ===== 4. ETAT / REFERENTIELS =====
-const S={uid:null,email:'',nom:'',role:null,isGest:false,isRH:false,isAdmin:false,view:'jour',
+const S={uid:null,email:'',nom:'',role:null,isGest:false,isRH:false,isAdmin:false,tel:false,view:'jour',
   pers:{},persList:[],siti:[],sitiById:{},tipi:[],tipiById:{},festivita:[],chiusure:{},projets:[],projById:{},
   jour:aujourdhui(),ouverte:null,timbr:[],rip:[],recents:[],jourRq:[],jourVal:null,
   recap:{mode:'sem',ref:aujourdhui(),d:null,t:[],r:[],a:[],v:[]},
@@ -1462,7 +1468,7 @@ function renderJour(){
   if(lock==='clos'){lk.innerHTML='🔒 '+escH(tr('lock_clos'));lk.classList.remove('hidden');}
   else if(lock==='valide'){lk.innerHTML='🔒 '+escH(tr('lock_valide',{n:nomDe(S.jourVal.validata_da),d:fmtQuand(S.jourVal.validata_il).slice(0,10)}));lk.classList.remove('hidden');}
   else lk.classList.add('hidden');
-  $('#j-add').classList.toggle('hidden',!!lock);
+  $('#j-add').classList.toggle('hidden',!!lock||S.tel);
   renderHorloge();
   renderPointages();
   renderRepart();
@@ -1535,9 +1541,11 @@ function lignePointage(r,ov,clic){
 function renderPointages(){
   const rows=S.timbr, tot=totalPointe(rows);
   $('#j-tot').textContent=fmtDur(tot);
-  if(!rows.length){$('#j-list').innerHTML=`<div class="empty-s">${escH(tr('empty_punch'))}</div>`;return;}
+  // Sur telephone, les pointages se lisent ; les corrections se font sur ordinateur (sortie oubliee : bouton de pointage)
+  const aide=S.tel?`<div class="fhint" style="margin-top:8px">${escH(tr('j_corr_pc'))}</div>`:'';
+  if(!rows.length){$('#j-list').innerHTML=`<div class="empty-s">${escH(tr('empty_punch'))}</div>`+aide;return;}
   const ov=chevauchements(rows);
-  $('#j-list').innerHTML=rows.map(r=>lignePointage(r,ov,`ouvrirEditeur('${r.id}')`)).join('');
+  $('#j-list').innerHTML=rows.map(r=>lignePointage(r,ov,S.tel?null:`ouvrirEditeur('${r.id}')`)).join('')+aide;
 }
 
 // ---- Pointage par le bouton : l'heure est celle du serveur (fonction ore_timbra) ----
@@ -1577,7 +1585,8 @@ function ouvrirEditeur(id,opts){
   const cible=r?r.user_id:(opts.cible||S.uid), autre=cible!==S.uid;
   const jour=r?r.giorno:(opts.jour||S.jour);
   const lock=autre?(moisClos(jour)?'clos':null):(r&&r.giorno!==S.jour?(moisClos(r.giorno)?'clos':null):verrouJour());
-  EDIT_CTX={id,cible,autre,apres:opts.apres||null};
+  EDIT_CTX={id,cible,autre,apres:opts.apres||null,oubli:!!opts.oubli};
+  const fige=S.tel&&!!opts.oubli&&!autre;   // telephone : seule l'heure de sortie oubliee se renseigne
   const dern=!autre&&S.timbr.length?S.timbr[S.timbr.length-1]:null;
   const v={giorno:jour,entrata:r?hm(r.entrata):(dern&&dern.uscita?hm(dern.uscita):'08:00'),uscita:r?hm(r.uscita):'',nota:r?(r.nota||''):''};
   const ro=!!lock;
@@ -1585,19 +1594,19 @@ function ouvrirEditeur(id,opts){
   ouvrirModal(`<h3>${escH(tr(r?'ed_edit':'ed_new'))}${autre?' — '+escH(nomDe(cible)):''}</h3>
     ${opts.oubli?`<div class="msg-warn">${escH(tr('warn_forgot',{n:opts.oubli}))}</div>`:''}
     ${ro?`<div class="msg-info">🔒 ${escH(tr(lock==='clos'?'lock_clos':(lock==='valide'?'lock_valide_court':'lock_futur')))}</div>`:''}
-    <div class="fld"><label for="ed-j">${escH(tr('f_jour'))}</label><input type="date" id="ed-j" value="${v.giorno}" ${dis} ${autre?'disabled':''}></div>
+    <div class="fld"><label for="ed-j">${escH(tr('f_jour'))}</label><input type="date" id="ed-j" value="${v.giorno}" ${dis} ${autre||fige?'disabled':''}></div>
     <div class="frow">
-      <div class="fld"><label for="ed-e">${escH(tr('f_entree'))}</label><input type="time" id="ed-e" value="${v.entrata}" ${dis}></div>
+      <div class="fld"><label for="ed-e">${escH(tr('f_entree'))}</label><input type="time" id="ed-e" value="${v.entrata}" ${dis} ${fige?'disabled':''}></div>
       <div class="fld"><label for="ed-u">${escH(tr('f_sortie'))}</label><input type="time" id="ed-u" value="${v.uscita}" ${dis}></div>
     </div>
     <div class="fhint info" id="ed-info"></div>
-    ${ro?'':`<div class="fhint">${escH(tr('f_sortie_vide'))}</div>`}
+    ${ro?'':`<div class="fhint">${escH(tr(opts.oubli?'f_sortie_oubli':'f_sortie_vide'))}</div>`}
     <div class="fld"><label for="ed-n">${escH(tr('f_note'))}</label><input type="text" id="ed-n" maxlength="200" value="${escH(v.nota)}" ${dis}></div>
     ${autre&&!ro?`<div class="fld"><label for="ed-m">${escH(tr('f_motif'))} *</label><input type="text" id="ed-m" maxlength="200" placeholder="${escH(tr('f_motif_ph'))}"></div>`:''}
     ${r&&r.origine==='correzione'&&r.motivo?`<div class="fhint">${escH(tr('derniere_corr',{n:nomDe(r.modificato_da),m:r.motivo}))}</div>`:''}
     <div class="ferr hidden" id="ed-err"></div>
     <div class="mact">
-      ${r&&!ro?`<button class="btn danger sm" onclick="supprimerPointage('${r.id}')">${escH(tr('del'))}</button>`:''}
+      ${r&&!ro&&!fige?`<button class="btn danger sm" onclick="supprimerPointage('${r.id}')">${escH(tr('del'))}</button>`:''}
       <span class="sp"></span>
       <button class="btn ghost sm" onclick="${opts.apres?'EDIT_CTX.apres(true)':'fermerModal()'}">${escH(tr(ro?'close':'cancel'))}</button>
       ${ro?'':`<button class="btn sm" id="ed-save" onclick="sauverPointage()">${escH(tr('save'))}</button>`}
@@ -1614,6 +1623,7 @@ async function sauverPointage(){
   const motivo=autre?($('#ed-m').value||'').trim():null;
   const err=m=>ferr('#ed-err',m);
   if(!g||!e) return err(tr('err_entree'));
+  if(EDIT_CTX.oubli&&!u) return err(tr('err_sortie'));
   if(u&&u===e) return err(tr('err_same'));
   if(u&&duree(e,u)>20*60) return err(tr('err_long'));
   if(autre&&!motivo) return err(tr('e_motif'));
@@ -1759,7 +1769,7 @@ function tuileSolde(s){
 }
 
 async function chargerBadge(){
-  if(!S.isGest) return;
+  if(!gestionIci()){majBadge(0);return;}
   const {data,error}=await sb.from('ore_richieste').select('id,user_id').eq('stato','richiesta');
   if(!error) majBadge((data||[]).filter(r=>r.user_id!==S.uid).length);
 }
@@ -1775,13 +1785,13 @@ async function chargerAbsences(){
     let d0=addDays(aujourdhui(),-400);
     S.abs.saldi.forEach(s=>{if(s.data_riferimento<d0)d0=s.data_riferimento;});
     const tasks=[fetchAll(()=>sb.from('ore_richieste').select('*').eq('user_id',S.uid).gte('al',d0).order('dal',{ascending:false}).order('id'))];
-    if(S.isGest){
+    if(gestionIci()){
       tasks.push(fetchAll(()=>sb.from('ore_richieste').select('*').eq('stato','richiesta').order('dal').order('id')));
       tasks.push(fetchAll(()=>sb.from('ore_richieste').select('*').eq('stato','approvata').gte('al',aujourdhui()).lte('dal',addDays(aujourdhui(),30)).order('dal').order('id')));
     }
     const [mes,pend,eq]=await Promise.all(tasks);
     S.abs.mes=mes; S.abs.pend=(pend||[]).filter(r=>r.user_id!==S.uid); S.abs.equipe=(eq||[]).filter(r=>r.user_id!==S.uid);
-    if(S.isGest) majBadge(S.abs.pend.length);
+    if(gestionIci()) majBadge(S.abs.pend.length);
     errBox('#ab-err',null);
   }catch(e){errBox('#ab-err',e);}
   renderAbsences();
@@ -1817,7 +1827,7 @@ function ligneDemande(r,mode){
 function renderAbsences(){
   const td=aujourdhui();
   let h='';
-  if(S.isGest){
+  if(gestionIci()){
     h+=`<div class="panel"><div class="phead"><h2>${escH(tr('ab_atraiter'))}</h2><span class="pill">${S.abs.pend.length}</span></div>`
       +(S.abs.pend.length?S.abs.pend.map(r=>ligneDemande(r,'decision')).join(''):`<div class="empty-s">${escH(tr('ab_rien_atraiter'))}</div>`)+'</div>';
   }
@@ -1829,7 +1839,7 @@ function renderAbsences(){
   h+=`<div class="panel"><div class="phead"><h2>${escH(tr('ab_mes'))}</h2>
       <div class="seg" id="ab-f"><button data-f="avenir" class="${f==='avenir'?'active':''}">${escH(tr('ab_avenir'))}</button><button data-f="toutes" class="${f==='toutes'?'active':''}">${escH(tr('ab_toutes'))}</button></div></div>`
     +(list.length?list.map(r=>ligneDemande(r,'mes')).join(''):`<div class="empty-s">${escH(tr(f==='toutes'?'ab_aucune':'ab_aucune_avenir'))}</div>`)+'</div>';
-  if(S.isGest){
+  if(gestionIci()){
     h+=`<div class="panel"><h2 style="margin-bottom:6px">${escH(tr('ab_equipe'))}</h2>`
       +(S.abs.equipe.length?S.abs.equipe.map(r=>ligneDemande(r,'equipe')).join(''):`<div class="empty-s">${escH(tr('ab_equipe_vide'))}</div>`)+'</div>';
   }
@@ -1871,7 +1881,7 @@ async function annulerDemande(id){
 function ouvrirDemande(){
   const types=S.tipi.filter(t=>t.attivo);
   if(!types.length){toast(tr('ab_pas_types'),'err');return;}
-  const td=aujourdhui(), autres=S.isGest?S.persList.filter(p=>p.ruolo&&p.attivo):[];
+  const td=aujourdhui(), autres=gestionIci()?S.persList.filter(p=>p.ruolo&&p.attivo):[];
   const opt=cat=>types.filter(t=>t.categoria===cat).map(t=>`<option value="${t.id}">${escH(nomType(t))}</option>`).join('');
   ouvrirModal(`<h3>${escH(tr('abs_new_t'))}</h3>
     ${autres.length>1?`<div class="fld"><label for="dm-p">${escH(tr('col_pers'))}</label><select id="dm-p">${autres.map(p=>`<option value="${p.user_id}" ${p.user_id===S.uid?'selected':''}>${escH(p.nome)}</option>`).join('')}</select></div>`:''}
@@ -2792,8 +2802,27 @@ async function exportJournal(){
 
 // ===== 10. NAVIGATION / DEMARRAGE =====
 const VUES_GEST=['valider','synthese','projets','cloture','params','journal'];
+// Telephone (ecran etroit et tactile) : l'outil sert a pointer. Validation, demandes a decider, parametres et
+// corrections de pointages se font sur ordinateur, pour tous les roles.
+const MQ_ETROIT=matchMedia('(max-width: 899px)');
+const estTel=()=>MQ_ETROIT.matches&&(matchMedia('(pointer: coarse)').matches||navigator.maxTouchPoints>0);
+const gestionIci=()=>S.isGest&&!S.tel;
+function appliquerMode(){
+  S.tel=estTel();
+  document.documentElement.classList.toggle('tel',S.tel);
+  $$('.gest').forEach(e=>e.classList.toggle('hidden',!S.isGest||S.tel));
+  $$('.proj').forEach(e=>e.classList.toggle('hidden',!['ADMIN','MANAGER'].includes(S.role)||S.tel));
+  $$('.rh').forEach(e=>e.classList.toggle('hidden',!S.isRH||S.tel));
+}
+MQ_ETROIT.addEventListener('change',()=>{
+  if(!S.uid) return;
+  const avant=S.tel; appliquerMode(); if(avant===S.tel) return;
+  chargerBadge();
+  if(!peutVoir(S.view)) allerA('jour'); else if(S.view==='absences') chargerAbsences(); else renderVueCourante();
+});
 function peutVoir(v){
   if(['jour','absences','recap'].includes(v)) return true;
+  if(S.tel) return false;
   if(v==='valider'||v==='synthese') return S.isGest;
   if(v==='projets') return ['ADMIN','MANAGER'].includes(S.role);
   if(['cloture','params','journal'].includes(v)) return S.isRH;
@@ -2853,6 +2882,7 @@ function ouvrirMenu(){
     <div class="fld"><label>${escH(tr('m_theme'))}</label><div class="seg wide">
       <button class="${th==='light'?'active':''}" onclick="setTheme('light');ouvrirMenu()">${escH(tr('th_light'))}</button>
       <button class="${th==='dark'?'active':''}" onclick="setTheme('dark');ouvrirMenu()">${escH(tr('th_dark'))}</button></div></div>
+    ${S.isGest?`<div class="fhint" style="margin:2px 0 10px">${escH(tr('m_gest_pc'))}</div>`:''}
     <div class="mm-links"><button onclick="ouvrirChangeMdp()">${escH(tr('m_mdp'))}</button><button class="danger" onclick="deconnexion()">${escH(tr('signout'))}</button></div>
     <div class="mact"><span class="sp"></span><button class="btn ghost sm" onclick="fermerModal()">${escH(tr('close'))}</button></div>`);
 }
@@ -2978,9 +3008,7 @@ async function entrer(session){
   }catch(e){errBox('#j-err',e);}
   S.nom=(me&&me.nome)||(S.pers[S.uid]&&S.pers[S.uid].nome)||S.email.split('@')[0];
   if(S.role==='RESP_SITO') S.siteFiltre=(S.pers[S.uid]||{}).sito_id||'';
-  $$('.gest').forEach(e=>e.classList.toggle('hidden',!S.isGest));
-  $$('.proj').forEach(e=>e.classList.toggle('hidden',!['ADMIN','MANAGER'].includes(S.role)));
-  $$('.rh').forEach(e=>e.classList.toggle('hidden',!S.isRH));
+  appliquerMode();
   $('#side-logo').innerHTML=easeLogo(30);$('#mtop-logo').innerHTML=easeLogo(20);
   renderUser();
   $('#auth').classList.add('hidden');gate.classList.add('hidden');$('#content').classList.remove('hidden');
