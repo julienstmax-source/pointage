@@ -465,6 +465,20 @@
   .fld input[type=password]:focus{outline:none;border-color:var(--blue-soft)}
   @media(max-width:900px){.fld input[type=password]{font-size:16px}}
 
+/* Projet choisi a cote du bouton de pointage */
+.clk-proj{margin-top:12px;display:flex;align-items:center;gap:10px}
+.clk-proj label{font-size:12px;font-weight:700;color:#92a6c0;text-transform:uppercase;letter-spacing:.4px;flex:none}
+.clk-proj select{flex:1;min-width:0;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);color:#e8eef6;
+  border-radius:10px;padding:10px 12px;font-size:15px;font-weight:600;-webkit-appearance:none;appearance:none;
+  background-image:linear-gradient(45deg,transparent 50%,#92a6c0 50%),linear-gradient(135deg,#92a6c0 50%,transparent 50%);
+  background-position:calc(100% - 18px) 50%,calc(100% - 13px) 50%;background-size:5px 5px;background-repeat:no-repeat;padding-right:32px}
+.clk-proj select option,.clk-proj select optgroup{color:#1e293b;background:#fff}
+.clk-proj select:focus-visible{outline:2px solid #8FC1EE;outline-offset:2px}
+.clk-proj .sw{width:10px;height:10px;border-radius:3px;flex:none}
+.clk-proj-info{font-size:11.5px;color:#7d90a8;margin-top:6px}
+.tag.proj{display:inline-flex;align-items:center;gap:5px}
+.tag.proj .sw{width:8px;height:8px;border-radius:2px}
+
 </style>
 </head>
 <body>
@@ -536,6 +550,7 @@
               <div class="clk-top"><span id="clk-state"></span><span id="clk-now"></span></div>
               <div class="clk-time" id="clk-time">0h00</div>
               <div class="clk-sub" id="clk-sub"></div>
+              <div class="clk-proj hidden" id="clk-proj"></div>
               <button class="clk-btn in" id="clk-btn" onclick="pointer()"></button>
               <div class="dayline" id="dayline"></div>
               <div class="dl-scale" id="dl-scale"></div>
@@ -788,6 +803,7 @@ const I={
     r_noproj:'Aucun projet actif pour l’instant. Demande à un administrateur d’en créer.',r_noproj_adm:'Aucun projet actif. Crée-en un dans Projets.',
     r_rien:'Rien à répartir.',r_saved:'Enregistré',
     ed_new:'Nouveau pointage',ed_edit:'Pointage',f_jour:'Jour',f_entree:'Arrivée',f_sortie:'Départ',
+    clk_proj:'Projet',clk_proj_aucun:'— Sans projet —',clk_proj_tous:'Tous les projets',ok_proj:'Projet : {p}',ok_proj_cambio:'{p} depuis {h}',e_progetto:'Projet inconnu ou fermé.',
     f_sortie_oubli:'Indique l’heure à laquelle tu es réellement parti(e) ; ton responsable la verra à la validation.',err_sortie:'Indique l’heure de sortie.',
     j_corr_pc:'Une erreur dans tes pointages ? Ton responsable la corrige sur ordinateur.',m_gest_pc:'Validation, demandes à décider et paramètres : sur ordinateur.',
     f_sortie_vide:'Laisse le départ vide si la personne est encore en poste.',f_note:'Note',f_lendemain:'départ le lendemain',f_duree:'Durée : {d}',
@@ -916,6 +932,7 @@ const I={
     r_noproj:'Nessun progetto attivo per ora. Chiedi a un amministratore di crearne.',r_noproj_adm:'Nessun progetto attivo. Creane uno in Progetti.',
     r_rien:'Niente da ripartire.',r_saved:'Salvato',
     ed_new:'Nuova timbratura',ed_edit:'Timbratura',f_jour:'Giorno',f_entree:'Entrata',f_sortie:'Uscita',
+    clk_proj:'Progetto',clk_proj_aucun:'— Senza progetto —',clk_proj_tous:'Tutti i progetti',ok_proj:'Progetto: {p}',ok_proj_cambio:'{p} dalle {h}',e_progetto:'Progetto sconosciuto o chiuso.',
     f_sortie_oubli:'Indica l’ora in cui sei davvero uscito/a; il tuo responsabile la vedrà alla convalida.',err_sortie:'Indica l’ora di uscita.',
     j_corr_pc:'Un errore nelle tue timbrature? Lo corregge il tuo responsabile dal computer.',m_gest_pc:'Convalida, richieste da decidere e parametri: dal computer.',
     f_sortie_vide:'Lascia vuota l’uscita se la persona è ancora in servizio.',f_note:'Nota',f_lendemain:'uscita il giorno dopo',f_duree:'Durata: {d}',
@@ -1044,6 +1061,7 @@ const I={
     r_noproj:'No active project yet. Ask an administrator to create some.',r_noproj_adm:'No active project. Create one in Projects.',
     r_rien:'Nothing left to allocate.',r_saved:'Saved',
     ed_new:'New entry',ed_edit:'Entry',f_jour:'Day',f_entree:'In',f_sortie:'Out',
+    clk_proj:'Project',clk_proj_aucun:'— No project —',clk_proj_tous:'All projects',ok_proj:'Project: {p}',ok_proj_cambio:'{p} since {h}',e_progetto:'Unknown or closed project.',
     f_sortie_oubli:'Enter the time you actually left; your manager will see it when validating.',err_sortie:'Enter the clock-out time.',
     j_corr_pc:'A mistake in your punches? Your manager corrects it on a computer.',m_gest_pc:'Validation, requests to decide and settings: on a computer.',
     f_sortie_vide:'Leave Out empty if the person is still on duty.',f_note:'Note',f_lendemain:'out the next day',f_duree:'Duration: {d}',
@@ -1298,7 +1316,7 @@ function minutesAbsenceJour(rq,iso){
 // ===== 4. ETAT / REFERENTIELS =====
 const S={uid:null,email:'',nom:'',role:null,isGest:false,isRH:false,isAdmin:false,tel:false,view:'jour',
   pers:{},persList:[],siti:[],sitiById:{},tipi:[],tipiById:{},festivita:[],chiusure:{},projets:[],projById:{},
-  jour:aujourdhui(),ouverte:null,timbr:[],rip:[],recents:[],jourRq:[],jourVal:null,
+  jour:aujourdhui(),ouverte:null,projCourant:'',timbr:[],rip:[],recents:[],jourRq:[],jourVal:null,
   recap:{mode:'sem',ref:aujourdhui(),d:null,t:[],r:[],a:[],v:[]},
   abs:{mes:[],saldi:[],pend:[],equipe:[],filtre:'avenir'},
   va:{lun:lundiDe(addDays(aujourdhui(),-7)),d:null},
@@ -1356,7 +1374,7 @@ function selectSite(onch){
 const ERRS={ORE_ACCES:'e_acces',ORE_DROITS:'e_droits',ORE_MOTIF:'e_motif',ORE_MOIS_CLOS:'e_mois_clos',ORE_SEMAINE_VALIDEE:'e_sem_val',
   ORE_FUTUR:'e_futur',ORE_DUREE:'e_duree',ORE_POINTAGE_OUVERT:'e_ouvert',ORE_AUTOVALIDATION:'e_autoval',ORE_MOIS_EN_COURS:'e_mois_cours',
   ORE_ROLE_ADMIN:'e_role_admin',ORE_DEMANDE_FIGEE:'e_dem_figee',ORE_CHEVAUCHEMENT:'e_chevauch',ORE_TYPE:'e_type',ORE_PERIODE:'e_periode',
-  ORE_PERSONNE:'e_droits',ORE_INTROUVABLE:'e_introuvable',ORE_DERNIER_ADMIN:'e_dernier_admin'};
+  ORE_PERSONNE:'e_droits',ORE_INTROUVABLE:'e_introuvable',ORE_DERNIER_ADMIN:'e_dernier_admin',ORE_PROGETTO:'e_progetto'};
 function msgErreur(e,ctx){
   if(!e) return '';
   if(tableManquante(e)) return tr('err_tables');
@@ -1475,10 +1493,57 @@ function renderJour(){
 }
 const horlogeVisible=()=>S.jour===aujourdhui()||!!(S.ouverte&&S.ouverte.giorno===S.jour);
 
+// ---- Projet choisi a cote du bouton : a la sortie, la base attribue la duree du pointage a ce projet ----
+const CLE_PROJ='ease_ore_proj';
+const projActif=id=>!!(id&&S.projById[id]&&S.projById[id].attivo);
+function initProj(){
+  let v='';try{v=localStorage.getItem(CLE_PROJ)||'';}catch(e){}
+  S.projCourant=projActif(v)?v:(S.recents.find(projActif)||'');
+}
+function memoProj(pid){S.projCourant=pid||'';try{localStorage.setItem(CLE_PROJ,S.projCourant);}catch(e){}}
+// En poste : le projet du pointage en cours ; sinon celui choisi pour la prochaine arrivee
+const projChoisi=()=>S.ouverte?(S.ouverte.progetto_id||''):(projActif(S.projCourant)?S.projCourant:'');
+function renderProjHorloge(){
+  const box=$('#clk-proj');
+  if(document.activeElement&&document.activeElement.id==='clk-psel') return;   // pas pendant le choix
+  const actifs=S.projets.filter(p=>p.attivo);
+  if(!actifs.length||(S.jour!==aujourdhui()&&!S.ouverte)){box.classList.add('hidden');box.innerHTML='';return;}
+  const cur=projChoisi(), pc=S.projById[cur];
+  const rec=S.recents.map(id=>S.projById[id]).filter(p=>p&&p.attivo);
+  const autres=actifs.filter(p=>!rec.includes(p)).sort((a,b)=>String(a.codice).localeCompare(String(b.codice)));
+  const opt=p=>`<option value="${p.id}" ${p.id===cur?'selected':''}>${escH(p.codice)} — ${escH(p.nome)}</option>`;
+  const liste=rec.length&&autres.length
+    ?`<optgroup label="${escH(tr('r_recent'))}">${rec.map(opt).join('')}</optgroup><optgroup label="${escH(tr('clk_proj_tous'))}">${autres.map(opt).join('')}</optgroup>`
+    :rec.concat(autres).map(opt).join('');
+  box.innerHTML=`<label for="clk-psel">${escH(tr('clk_proj'))}</label>${pc?`<span class="sw" style="background:${escH(coulProj(pc))}"></span>`:''}
+    <select id="clk-psel" onchange="changerProjet(this.value)"><option value="">${escH(tr('clk_proj_aucun'))}</option>${liste}${pc&&!pc.attivo?opt(pc):''}</select>`;
+  box.classList.remove('hidden');
+}
+async function changerProjet(pid){
+  memoProj(pid);
+  if(!S.ouverte){document.activeElement&&document.activeElement.blur();renderProjHorloge();return;}
+  await flushRip();
+  try{
+    const {data,error}=await sb.rpc('ore_cambia_progetto',{p_progetto:pid||null});
+    if(error) throw error;
+    if(data.esito==='oubli'){
+      S.jour=data.giorno;await rafraichirJour();
+      ouvrirEditeur(data.id,{oubli:Math.floor(secDepuis(data.giorno,data.entrata)/3600)});return;
+    }
+    const nom=pid&&S.projById[pid]?S.projById[pid].codice:tr('clk_proj_aucun');
+    if(data.esito==='cambio') toast(tr('ok_proj_cambio',{p:nom,h:data.ora}));
+    else if(data.esito==='progetto') toast(tr('ok_proj',{p:nom}));
+    vibrer();
+  }catch(e){toast(msgErreur(e),'err');}
+  document.activeElement&&document.activeElement.blur();
+  await rafraichirJour();
+}
+
 function renderHorloge(){
   const vis=horlogeVisible();
   $('#clock').classList.toggle('hidden',!vis);
   if(!vis) return;
+  renderProjHorloge();
   const o=S.ouverte, tot=totalPointe(S.timbr), btn=$('#clk-btn');
   $('#clk-now').textContent=maintenantHM();
   if(o){
@@ -1527,6 +1592,7 @@ function lignePointage(r,ov,clic){
   const oubli=open&&brut>OUBLI_MIN, nuit=!open&&minDe(r.uscita)<minDe(r.entrata);
   const tags=(oubli?`<span class="tag warn">${escH(tr('oubli'))}</span>`:'')
     +(ov.has(r.id)?`<span class="tag warn">${escH(tr('overlap'))}</span>`:'')
+    +(r.progetto_id&&S.projById[r.progetto_id]?`<span class="tag proj"><span class="sw" style="background:${escH(coulProj(S.projById[r.progetto_id]))}"></span>${escH(S.projById[r.progetto_id].codice)}</span>`:'')
     +(r.modalita==='lavoro_agile'?`<span class="tag sw">${escH(tr('tag_sw'))}</span>`:'')
     +(r.origine==='manuale'?`<span class="tag">${escH(tr('badge_manual'))}</span>`:'')
     +(r.origine==='correzione'?`<span class="tag corr" title="${escH(r.motivo||'')}">${escH(tr('badge_corr'))}</span>`:'');
@@ -1554,15 +1620,17 @@ async function pointer(){
   if(pointageEnCours) return;
   pointageEnCours=true;$('#clk-btn').disabled=true;
   try{
-    const {data,error}=await sb.rpc('ore_timbra');
+    await flushRip();
+    const {data,error}=await sb.rpc('ore_timbra',S.ouverte?{}:{p_progetto:projChoisi()||null});
     if(error) throw error;
     if(data.esito==='oubli'){ // depart oublie : on demande l'heure reelle au lieu d'enregistrer une journee de 20 h
       S.jour=data.giorno;await rafraichirJour();
       ouvrirEditeur(data.id,{oubli:Math.floor(secDepuis(data.giorno,data.entrata)/3600)});
       return;
     }
-    if(data.esito==='entrata'){S.jour=aujourdhui();toast(tr('ok_in',{h:data.ora})+(data.modalita==='lavoro_agile'?' · '+tr('tag_sw'):''));}
-    else if(data.esito==='uscita') toast(tr('ok_out',{h:data.ora}));
+    const code=id=>id&&S.projById[id]?' · '+S.projById[id].codice:'';
+    if(data.esito==='entrata'){S.jour=aujourdhui();toast(tr('ok_in',{h:data.ora})+code(data.progetto_id)+(data.modalita==='lavoro_agile'?' · '+tr('tag_sw'):''));}
+    else if(data.esito==='uscita') toast(tr('ok_out',{h:data.ora})+code(data.progetto_id));
     else if(data.esito==='annullata') toast(tr('ok_annule'));
     vibrer();
     await rafraichirJour();
@@ -3006,6 +3074,7 @@ async function entrer(session){
     await chargerRef();
     await chargerRecents();
   }catch(e){errBox('#j-err',e);}
+  initProj();
   S.nom=(me&&me.nome)||(S.pers[S.uid]&&S.pers[S.uid].nome)||S.email.split('@')[0];
   if(S.role==='RESP_SITO') S.siteFiltre=(S.pers[S.uid]||{}).sito_id||'';
   appliquerMode();
