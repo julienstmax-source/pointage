@@ -22,9 +22,9 @@ try{ if(localStorage.getItem('ease_theme')==='dark') document.documentElement.se
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Pointage">
+<link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="data:image/png;base64,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">
 <link rel="icon" href="data:image/png;base64,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">
-<link rel="manifest" href="./manifest.webmanifest">
 <link rel="preconnect" href="https://cfndfklywtstrlfrrtwa.supabase.co" crossorigin>
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <title>EASE — Pointage</title>
@@ -632,6 +632,97 @@ try{ if(localStorage.getItem('ease_theme')==='dark') document.documentElement.se
   /* ---- Barre du haut et onglets du telephone : memes que les modules du portail sur telephone ---- */
   .mtop,.tabbar{display:none}
 
+
+  /* ---- Journee, mise en page (16/11/2026) : bandeau de pointage sur toute la largeur,
+     puis Pointages et Repartition cote a cote, de meme hauteur ---- */
+  .jgrid>*{margin-bottom:0}
+  .jgrid>.panel{display:flex;flex-direction:column;min-width:0}
+  .j-pts #j-list{flex:1}
+  .j-rep #r-list{flex:1;display:flex;flex-direction:column}
+  .j-pts .addbtn{align-self:flex-start}
+  #j-list>.empty-s,#r-list>.empty-s{flex:1;display:flex;align-items:center;justify-content:center;text-align:center;
+    min-height:64px;padding:14px;border:1px dashed var(--line);border-radius:10px;background:var(--soft)}
+  .clk-proj{margin-top:10px}
+  .clk-stats,.j-sem{display:none}
+  @media(min-width:1101px){
+    .clk-stats{display:grid;grid-template-columns:repeat(3,minmax(0,max-content));gap:0;padding-top:12px;border-top:1px solid rgba(255,255,255,.08)}
+    .clk-stats:empty{display:none}
+    .cst{display:flex;flex-direction:column;justify-content:center;gap:3px;padding:0 28px;min-width:0}
+    .cst:first-child{padding-left:0}
+    .cst+.cst{border-left:1px solid rgba(255,255,255,.08)}
+    .cst .l{font-size:var(--fs-1);font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#7d90a8;white-space:nowrap}
+    .cst .v{font-family:'Space Grotesk',sans-serif;font-size:22px;font-weight:700;color:#e8eef6;font-variant-numeric:tabular-nums;white-space:nowrap}
+    .cst .v small{font-size:13px;font-weight:600;color:#7d90a8;margin-left:3px}
+    .cst .v.ok{color:#7fd6a8}.cst .v.pos{color:#F5B95F}
+    .j-sem{display:flex}
+    .wk{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px}
+    .wkd{all:unset;box-sizing:border-box;cursor:pointer;display:flex;flex-direction:column;gap:6px;padding:10px 12px;border:1px solid var(--line);
+      border-radius:12px;background:var(--soft);min-width:0}
+    .wkd:hover{border-color:var(--blue-soft)}
+    .wkd:focus-visible{outline:2px solid var(--blue-soft);outline-offset:2px}
+    .wkd.we{opacity:.6}
+    .wkd.sel{background:var(--panel);border-color:var(--blue-soft);box-shadow:inset 0 0 0 1px var(--blue-soft)}
+    .wkd .dn{display:flex;justify-content:space-between;align-items:baseline;gap:6px;font-size:var(--fs-2);font-weight:700;color:var(--muted);text-transform:capitalize}
+    .wkd.cur .dn{color:var(--mint)}
+    .wkd .dn i{font-style:normal;font-weight:600;font-size:var(--fs-1);text-transform:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .wkd .hv{font-family:'Space Grotesk',sans-serif;font-size:19px;font-weight:700;color:var(--txt);font-variant-numeric:tabular-nums;line-height:1.1}
+    .wkd .hv small{font-family:'IBM Plex Sans',sans-serif;font-size:var(--fs-2);font-weight:500;color:var(--muted);margin-left:3px}
+    .wkd .tr{position:relative;height:6px;border-radius:4px;background:var(--line);overflow:hidden}
+    .wkd .tr span{position:absolute;top:0;bottom:0;left:0;border-radius:4px}
+    .wkd .tr .p{background:var(--blue-soft)}
+    .wkd .tr .a{background:repeating-linear-gradient(45deg,var(--blue-soft) 0 3px,transparent 3px 6px);opacity:.7}
+    .wkd .ec{font-family:'IBM Plex Mono',monospace;font-size:var(--fs-2);font-weight:700;min-height:16px;color:var(--muted)}
+    .wkd .ec.ok{color:var(--green)}.wkd .ec.pos{color:var(--amber)}.wkd .ec.neg{color:var(--red)}
+  }
+  @media(min-width:1101px){
+    .jgrid{grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-areas:"clk clk" "pts rep";align-items:stretch}
+    .jgrid>#clock{grid-area:clk}
+    .jgrid>.j-pts{grid-area:pts}
+    .jgrid>.j-rep{grid-area:rep}
+    .jgrid>.panel{min-height:230px}
+    .clock{padding:16px 22px 12px}
+    .jgrid{grid-template-areas:"clk clk" "pts rep" "sem sem"}
+    .jgrid>.j-sem{grid-area:sem;min-height:0}
+    .clk-body{display:grid;grid-template-columns:minmax(0,1fr) minmax(300px,520px);grid-template-areas:"main act" "stats stats";gap:12px 28px;align-items:center;margin-top:2px}
+    .clk-main{grid-area:main}.clk-act{grid-area:act}.clk-stats{grid-area:stats}
+    .clk-main .clk-time{margin-top:4px}
+    .clk-act{display:flex;flex-direction:column;gap:10px}
+    .clk-act .clk-proj{margin-top:0}
+    .clk-act .clk-btn{margin-top:0}
+    .clock .dayline{margin-top:16px}
+  }
+  @media(min-width:1560px){
+    .clk-body{grid-template-columns:auto minmax(0,1fr) minmax(320px,520px);grid-template-areas:"main stats act"}
+    .clk-stats{grid-template-columns:repeat(3,minmax(0,1fr));align-self:stretch;padding-top:0;border-top:0;
+      border-left:1px solid rgba(255,255,255,.10);border-right:1px solid rgba(255,255,255,.10)}
+    .cst,.cst:first-child{padding:0 18px}
+  }
+
+  /* ---- Mise en page commune (16/11/2026) : blocs alignes et de meme hauteur, barres de filtres a la meme hauteur ---- */
+  .tbar select{height:38px;padding-top:0;padding-bottom:0;background-color:var(--panel)}
+  .tbar .seg{height:38px;align-items:center;box-sizing:border-box}
+  .tbar .chips{margin:0}
+  .tbar .chips{align-items:center;min-height:38px}
+  .panel .empty-s{border:1px dashed var(--line);border-radius:10px;background:var(--soft);text-align:center;padding:14px}
+  .sect{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:2px 2px 8px}
+  .sect h2{font-family:'Space Grotesk',sans-serif;font-size:var(--fs-4);color:var(--mint)}
+  .soldes-l{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;margin-bottom:14px}
+  .soldes-l .solde{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 14px;box-shadow:0 1px 3px rgba(15,30,55,.05)}
+  .soldes-l .solde:last-child{border-bottom:1px solid var(--line);padding-bottom:10px}
+  .pjm{display:flex;align-items:center;gap:10px;min-width:170px}
+  .pjm b{font-family:'IBM Plex Mono',monospace;font-size:var(--fs-3);min-width:52px;text-align:right}
+  .pjbar{flex:1;height:6px;border-radius:4px;background:var(--soft);border:1px solid var(--line);overflow:hidden;min-width:60px}
+  .pjbar span{display:block;height:100%}
+  .abgrid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;align-items:stretch;margin-bottom:14px}
+  .abgrid2>.panel{margin-bottom:0}
+  @media(min-width:1101px){
+    .rgrid,.abgrid,.abgrid.solo{align-items:stretch}
+    .rgrid>.panel,.abgrid>div>.panel:only-child{display:flex;flex-direction:column;margin-bottom:0}
+    .abgrid>div{display:flex;flex-direction:column}
+    .abgrid>div>.panel:last-child{flex:1}
+    #rc-proj{flex:1}
+  }
+  @media(max-width:1100px){.abgrid2{grid-template-columns:minmax(0,1fr)}}
   @media(max-width:1100px){.jgrid,.rgrid,.abgrid,.abgrid.solo{grid-template-columns:minmax(0,1fr)}}
   @media(max-width:900px){
     .side{display:none}
@@ -702,6 +793,54 @@ try{ if(localStorage.getItem('ease_theme')==='dark') document.documentElement.se
     .hgrid{gap:4px}
   }
 
+
+  /* ---- Bandeau de pointage clair (16/11/2026) : plus de bloc sombre ; mis en avant par un fond bleute,
+     un liseré de couleur et le bouton plein. Suit le theme clair/sombre. ---- */
+  :root{--clk-bg:linear-gradient(115deg,#e3eefb 0%,#f3f8fe 45%,#ffffff 100%);--clk-line:#c9dcf1;--clk-in:#2F6FB0;--clk-in-tx:#ffffff;--clk-track:#dfe7f1}
+  html[data-theme="dark"]{--clk-bg:linear-gradient(115deg,#1a3452 0%,#172c45 45%,#152538 100%);--clk-line:#2f5675;--clk-in:#8FC1EE;--clk-in-tx:#0a1422;--clk-track:#26394f}
+  .clock{background:var(--clk-bg);border:1px solid var(--clk-line);border-left:4px solid var(--blue-soft);color:var(--txt);box-shadow:0 2px 10px rgba(27,58,99,.08)}
+  html[data-theme="dark"] .clock{box-shadow:0 2px 10px rgba(0,0,0,.3)}
+  .clock .clk-top{color:var(--muted)}
+  .clock .clk-top #clk-now{color:var(--muted)}
+  .clock .clk-live{color:var(--amber)}
+  .clock .clk-live i{background:var(--amber)}
+  .clock .clk-time{color:var(--mint)}
+  .clock .clk-sub,.clock .clk-proj-info{color:var(--muted)}
+  .clock .clk-proj label{color:var(--muted)}
+  .clock .clk-proj select{background-color:var(--panel);border-color:var(--line);color:var(--txt)}
+  .clock .clk-proj select:focus-visible{outline-color:var(--blue-soft)}
+  .clock .clk-btn.in{background:var(--clk-in);color:var(--clk-in-tx)}
+  .clock .clk-btn.in:hover{filter:brightness(1.06)}
+  .clock .clk-btn.out{box-shadow:inset 0 0 0 1px rgba(150,101,15,.25)}
+  .clock .clk-btn:focus-visible{outline-color:var(--blue-soft)}
+  .clock .dayline{background:var(--clk-track)}
+  .clock .dayline .seg-l:not(.open){background:var(--blue-soft)}
+  .clock .dayline .now{background:var(--txt)}
+  .clock .dl-scale{color:var(--muted)}
+  .clock .cst .l{color:var(--muted)}
+  .clock .cst .v{color:var(--txt)}
+  .clock .cst .v small{color:var(--muted)}
+  .clock .cst .v.ok{color:var(--green)}.clock .cst .v.pos{color:var(--amber)}
+  .clock .clk-stats{border-color:var(--clk-line)}
+  .clock .cst+.cst{border-left-color:var(--clk-line)}
+  /* le theorique du jour est deja dans le bandeau quand celui-ci est affiche */
+  #v-jour:has(#clock:not(.hidden)) #j-info .dchip:not(.hol):not(.abs){display:none}
+  /* telephone : pas d'export Excel (le fichier se lit mal sur un telephone) */
+  html.tel #v-recap>.head{display:none}
+  /* « Ma semaine » : ordinateur seulement */
+  .jgrid>.j-sem{display:none}
+  @media(min-width:1101px){.jgrid>.j-sem{display:flex}}
+  /* Telephone et fenetre etroite : theorique et reste a faire dans le bandeau */
+  @media(max-width:1100px){
+    .clock .clk-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));margin-top:10px;padding-top:10px;border-top:1px solid var(--clk-line)}
+    .clock .clk-stats:empty{display:none}
+    .clock .cst{display:flex;flex-direction:column;gap:2px;padding:0 12px;min-width:0}
+    .clock .cst:first-child{padding-left:0}
+    .clock .cst:nth-child(3){display:none}
+    .clock .cst .l{font-size:var(--fs-1);font-weight:700;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
+    .clock .cst .v{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;white-space:nowrap}
+    .clock .cst .v small{font-size:12px;margin-left:3px}
+  }
 </style>
 </head>
 <body>
@@ -745,7 +884,7 @@ try{ if(localStorage.getItem('ease_theme')==='dark') document.documentElement.se
     <main class="main" id="main">
       <!-- ================= JOURNEE ================= -->
       <section class="view" id="v-jour">
-        <div class="head"><div><h1 data-i="nav_jour">Journée</h1></div></div>
+        <div class="head"><div><h1 data-i="nav_jour">Journée</h1><div class="sub" data-i="jour_sub"></div></div></div>
         <div class="tbar">
           <div class="pernav">
             <button class="arr" onclick="jourDecaler(-1)" data-i-a="nav_prec">‹</button>
@@ -759,31 +898,38 @@ try{ if(localStorage.getItem('ease_theme')==='dark') document.documentElement.se
         <div id="j-err" class="msg-err hidden"></div>
         <div id="j-lock" class="msg-info hidden"></div>
         <div class="jgrid">
-          <div>
             <div class="clock" id="clock">
               <div class="clk-top"><span id="clk-state"></span><span id="clk-now"></span></div>
-              <div class="clk-time" id="clk-time">0h00</div>
-              <div class="clk-sub" id="clk-sub"></div>
-              <div class="clk-proj hidden" id="clk-proj"></div>
-              <button class="clk-btn in" id="clk-btn" onclick="pointer()"></button>
+              <div class="clk-body">
+                <div class="clk-main">
+                  <div class="clk-time" id="clk-time">0h00</div>
+                  <div class="clk-sub" id="clk-sub"></div>
+                </div>
+                <div class="clk-stats" id="clk-stats"></div>
+                <div class="clk-act">
+                  <div class="clk-proj hidden" id="clk-proj"></div>
+                  <button class="clk-btn in" id="clk-btn" onclick="pointer()"></button>
+                </div>
+              </div>
               <div class="dayline" id="dayline"></div>
               <div class="dl-scale" id="dl-scale"></div>
             </div>
-            <div class="panel">
+            <div class="panel j-pts">
               <div class="phead"><h2 data-i="h_pointages">Pointages</h2><span class="pill" id="j-tot">0h00</span></div>
               <div id="j-list" class="plist"></div>
               <button class="btn ghost sm addbtn" id="j-add" onclick="ouvrirEditeur(null)" data-i="add_manual">+ Ajouter à la main</button>
             </div>
-          </div>
-          <div>
-            <div class="panel">
+            <div class="panel j-rep">
               <div class="phead"><h2 data-i="h_repart">Répartition sur les projets</h2><span class="saved" id="r-saved"></span></div>
               <div class="bal" id="r-bal"></div>
               <div class="balbar" id="r-bar"><span style="width:0"></span></div>
               <div id="r-list"></div>
               <div id="r-add" class="radd"></div>
             </div>
-          </div>
+            <div class="panel j-sem" id="j-sem">
+              <div class="phead"><h2 data-i="h_sem">Ma semaine</h2><span class="pill" id="s-tot"></span></div>
+              <div class="wk" id="s-wk"></div>
+            </div>
         </div>
       </section>
 
@@ -800,7 +946,7 @@ try{ if(localStorage.getItem('ease_theme')==='dark') document.documentElement.se
       <!-- ================= RECAP ================= -->
       <section class="view hidden" id="v-recap">
         <div class="head">
-          <h1 data-i="nav_recap">Récap</h1>
+          <div><h1 data-i="nav_recap">Récap</h1><div class="sub" data-i="recap_sub"></div></div>
           <div class="headact"><button class="btn ghost sm" onclick="exportPerso()" data-i="export_btn">Exporter (Excel)</button></div>
         </div>
         <div class="tbar">
@@ -865,8 +1011,9 @@ try{ if(localStorage.getItem('ease_theme')==='dark') document.documentElement.se
           <div><h1 data-i="nav_projets">Projets</h1><div class="sub" data-i="proj_sub"></div></div>
           <button class="btn sm" onclick="editeurProjet(null)" data-i="proj_new">+ Nouveau projet</button>
         </div>
-        <div class="chips" id="pj-chips"><button class="chip active" data-f="actifs" data-i="f_actifs">Actifs</button><button class="chip" data-f="tous" data-i="f_tous">Tous</button></div>
+        <div class="tbar"><div class="chips" id="pj-chips"><button class="chip active" data-f="actifs" data-i="f_actifs">Actifs</button><button class="chip" data-f="tous" data-i="f_tous">Tous</button></div></div>
         <div id="pj-err" class="msg-err hidden"></div>
+        <div class="tiles" id="pj-tiles"></div>
         <div class="panel np"><div class="tablewrap" id="pj-table"></div></div>
       </section>
 
@@ -946,7 +1093,7 @@ document.querySelectorAll('script[type="text/plain"][data-global]').forEach(src=
     get(){ delete window[nom]; const x=document.createElement('script'); x.textContent=src.textContent; document.head.appendChild(x); return window[nom]; },
     set(v){ delete window[nom]; window[nom]=v; }});
 });
-const EASE_VERSION='09/11/2026 20:40';   // date d'assemblage, inscrite par assembler.py
+const EASE_VERSION='16/11/2026 15:30';   // date d'assemblage, inscrite par assembler.py
 const Ease=(()=>{
   const T=(fr,it,en)=>typeof L3==='function'?L3(fr,it,en):fr;
   const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -1322,7 +1469,7 @@ const I={
     auth_sub_rec:'Choisis un nouveau mot de passe.',auth_mdp1:'Nouveau mot de passe',auth_mdp2:'Confirmation',
     auth_err_court:'8 caractères minimum.',auth_err_diff:'Les deux mots de passe sont différents.',auth_valider:'Valider',
     ok_mdp:'Mot de passe enregistré',m_mdp:'Changer mon mot de passe',
-    today:'Aujourd’hui',week_of:'Semaine {n}',theo_jour:'Théorique',
+    today:'Aujourd’hui',week_of:'Semaine {n}',theo_jour:'Théorique',h_sem:'Ma semaine',k_reste_faire:'Reste à faire',k_atteint:'Atteint',k_sem:'Semaine',
     clk_none:'Pas encore pointé aujourd’hui',clk_on:'En poste',clk_on_sw:'En télétravail',clk_off_after:'Dernier départ à {h}',
     clk_since:'Arrivée à {h}',clk_since_day:'Arrivée le {d} à {h}',clk_tot:'pointées aujourd’hui',clk_tot_day:'pointées ce jour-là',lbl_tot_jour:'total du jour',
     btn_in:'Pointer l’arrivée',btn_out:'Pointer le départ',ok_in:'Arrivée pointée à {h}',ok_out:'Départ pointé à {h}',ok_annule:'Arrivée annulée (moins d’une minute).',
@@ -1368,7 +1515,7 @@ const I={
     e_dem_figee:'Cette demande ne peut plus être modifiée.',e_chevauch:'Une demande existe déjà sur ces dates.',e_type:'Type d’absence inconnu ou désactivé.',
     e_periode:'Période trop longue (un an maximum).',e_introuvable:'Élément introuvable (déjà supprimé ?).',e_doublon:'Cet élément existe déjà.',
     e_fk:'Élément utilisé ailleurs : désactive-le plutôt que de le supprimer.',e_dates:'Dates invalides.',e_heures:'Heures invalides.',
-    abs_sub:'Congés, permis, maladie et télétravail.',abs_new:'+ Nouvelle demande',abs_new_t:'Nouvelle demande',
+    abs_sub:'Congés, permis, maladie et télétravail.',jour_sub:'Pointage du jour, détail des pointages et répartition sur les projets.',recap_sub:'Vos heures de la semaine ou du mois : pointé, absences, écart et projets.',k_pj_actifs:'Projets actifs',k_pj_fermes:'Projets fermés',k_pj_clients:'Clients',pj_mois:'Réparti ce mois',pj_pers:'Personnes',k_pa_actifs:'Fiches actives',k_pa_resp:'Responsables, RH et admin',k_pa_inactifs:'Fiches désactivées',abs_new:'+ Nouvelle demande',abs_new_t:'Nouvelle demande',
     ab_atraiter:'Demandes à traiter',ab_rien_atraiter:'Aucune demande en attente.',ab_soldes:'Mes soldes',ab_mes:'Mes demandes',ab_avenir:'À venir',
     ab_toutes:'Toutes',ab_aucune:'Aucune demande.',ab_aucune_avenir:'Rien de prévu.',ab_equipe:'Absences de l’équipe (30 prochains jours)',
     ab_equipe_vide:'Personne d’absent.',ab_accepter:'Accepter',ab_refuser:'Refuser',ab_refuser_t:'Refuser la demande',ab_annuler:'Annuler',
@@ -1451,7 +1598,7 @@ const I={
     auth_sub_rec:'Scegli una nuova password.',auth_mdp1:'Nuova password',auth_mdp2:'Conferma',
     auth_err_court:'Minimo 8 caratteri.',auth_err_diff:'Le due password non coincidono.',auth_valider:'Conferma',
     ok_mdp:'Password salvata',m_mdp:'Cambia la mia password',
-    today:'Oggi',week_of:'Settimana {n}',theo_jour:'Teorico',
+    today:'Oggi',week_of:'Settimana {n}',theo_jour:'Teorico',h_sem:'La mia settimana',k_reste_faire:'Ancora da fare',k_atteint:'Raggiunto',k_sem:'Settimana',
     clk_none:'Nessuna timbratura oggi',clk_on:'In servizio',clk_on_sw:'In lavoro agile',clk_off_after:'Ultima uscita alle {h}',
     clk_since:'Entrata alle {h}',clk_since_day:'Entrata il {d} alle {h}',clk_tot:'timbrate oggi',clk_tot_day:'timbrate in questo giorno',lbl_tot_jour:'totale del giorno',
     btn_in:'Timbra l’entrata',btn_out:'Timbra l’uscita',ok_in:'Entrata timbrata alle {h}',ok_out:'Uscita timbrata alle {h}',ok_annule:'Entrata annullata (meno di un minuto).',
@@ -1497,7 +1644,7 @@ const I={
     e_dem_figee:'Questa richiesta non può più essere modificata.',e_chevauch:'Esiste già una richiesta su queste date.',e_type:'Tipo di assenza sconosciuto o disattivato.',
     e_periode:'Periodo troppo lungo (massimo un anno).',e_introuvable:'Elemento non trovato (già eliminato?).',e_doublon:'Questo elemento esiste già.',
     e_fk:'Elemento usato altrove: disattivalo invece di eliminarlo.',e_dates:'Date non valide.',e_heures:'Orari non validi.',
-    abs_sub:'Ferie, permessi, malattia e lavoro agile.',abs_new:'+ Nuova richiesta',abs_new_t:'Nuova richiesta',
+    abs_sub:'Ferie, permessi, malattia e lavoro agile.',jour_sub:'Timbratura del giorno, dettaglio delle timbrature e ripartizione sui progetti.',recap_sub:'Le tue ore della settimana o del mese: timbrato, assenze, scostamento e progetti.',k_pj_actifs:'Progetti attivi',k_pj_fermes:'Progetti chiusi',k_pj_clients:'Clienti',pj_mois:'Ripartito questo mese',pj_pers:'Persone',k_pa_actifs:'Schede attive',k_pa_resp:'Responsabili, RU e admin',k_pa_inactifs:'Schede disattivate',abs_new:'+ Nuova richiesta',abs_new_t:'Nuova richiesta',
     ab_atraiter:'Richieste da gestire',ab_rien_atraiter:'Nessuna richiesta in attesa.',ab_soldes:'I miei saldi',ab_mes:'Le mie richieste',ab_avenir:'Prossime',
     ab_toutes:'Tutte',ab_aucune:'Nessuna richiesta.',ab_aucune_avenir:'Niente in programma.',ab_equipe:'Assenze del team (prossimi 30 giorni)',
     ab_equipe_vide:'Nessun assente.',ab_accepter:'Approva',ab_refuser:'Rifiuta',ab_refuser_t:'Rifiuta la richiesta',ab_annuler:'Annulla',
@@ -1580,7 +1727,7 @@ const I={
     auth_sub_rec:'Choose a new password.',auth_mdp1:'New password',auth_mdp2:'Confirm',
     auth_err_court:'At least 8 characters.',auth_err_diff:'The two passwords don’t match.',auth_valider:'Confirm',
     ok_mdp:'Password saved',m_mdp:'Change my password',
-    today:'Today',week_of:'Week {n}',theo_jour:'Scheduled',
+    today:'Today',week_of:'Week {n}',theo_jour:'Scheduled',h_sem:'My week',k_reste_faire:'Still to do',k_atteint:'Reached',k_sem:'Week',
     clk_none:'Not clocked in today',clk_on:'On duty',clk_on_sw:'Working remotely',clk_off_after:'Last clock-out at {h}',
     clk_since:'Clocked in at {h}',clk_since_day:'Clocked in on {d} at {h}',clk_tot:'clocked today',clk_tot_day:'clocked that day',lbl_tot_jour:'day total',
     btn_in:'Clock in',btn_out:'Clock out',ok_in:'Clocked in at {h}',ok_out:'Clocked out at {h}',ok_annule:'Clock-in cancelled (under a minute).',
@@ -1626,7 +1773,7 @@ const I={
     e_dem_figee:'This request can no longer be changed.',e_chevauch:'A request already exists for these dates.',e_type:'Unknown or inactive leave type.',
     e_periode:'Period too long (one year maximum).',e_introuvable:'Item not found (already deleted?).',e_doublon:'This item already exists.',
     e_fk:'Item used elsewhere: deactivate it instead of deleting it.',e_dates:'Invalid dates.',e_heures:'Invalid times.',
-    abs_sub:'Annual leave, permits, sick leave and remote work.',abs_new:'+ New request',abs_new_t:'New request',
+    abs_sub:'Annual leave, permits, sick leave and remote work.',jour_sub:'Today\'s clocking, punch details and split across projects.',recap_sub:'Your hours for the week or month: clocked, absences, gap and projects.',k_pj_actifs:'Active projects',k_pj_fermes:'Closed projects',k_pj_clients:'Clients',pj_mois:'Split this month',pj_pers:'People',k_pa_actifs:'Active records',k_pa_resp:'Managers, HR and admin',k_pa_inactifs:'Deactivated records',abs_new:'+ New request',abs_new_t:'New request',
     ab_atraiter:'Requests to handle',ab_rien_atraiter:'No pending requests.',ab_soldes:'My balances',ab_mes:'My requests',ab_avenir:'Upcoming',
     ab_toutes:'All',ab_aucune:'No requests.',ab_aucune_avenir:'Nothing planned.',ab_equipe:'Team leave (next 30 days)',
     ab_equipe_vide:'Nobody away.',ab_accepter:'Approve',ab_refuser:'Refuse',ab_refuser_t:'Refuse the request',ab_annuler:'Cancel',
@@ -2009,6 +2156,57 @@ function allerJour(d){
   if(S.view!=='jour') allerA('jour'); else rafraichirJour();
 }
 function jourDecaler(n){allerJour(addDays(S.jour,n));}
+// Semaine du jour affiche (bandeau « Ma semaine », ordinateur seulement)
+async function chargerSemaine(){
+  if(S.tel) return;
+  const l=lundiDe(S.jour), d2=addDays(l,6), tok=S.uid+l+Date.now();
+  S.semTok=tok;
+  try{
+    const [tt,aa]=await Promise.all([
+      sb.from('ore_timbrature').select('*').eq('user_id',S.uid).gte('giorno',l).lte('giorno',d2).order('giorno').order('entrata'),
+      sb.from('ore_richieste').select('*').eq('user_id',S.uid).eq('stato','approvata').lte('dal',d2).gte('al',l)
+    ]);
+    for(const x of [tt,aa]) if(x.error) throw x.error;
+    if(S.semTok!==tok) return;
+    S.sem={l,t:tt.data||[],a:aa.data||[]};
+  }catch(e){S.sem=null;}
+  renderSemaine();renderStatsHorloge();
+}
+function totauxSemaine(){
+  if(!S.sem||S.sem.l!==lundiDe(S.jour)) return null;
+  const jours=joursEntre(S.sem.l,addDays(S.sem.l,6)), td=aujourdhui(), J=agregerJours(S.uid,jours,S.sem.t,[],S.sem.a);
+  if(J[S.jour]) J[S.jour].p=totalPointe(S.timbr);   // jour affiche : valeur a jour, pointage en cours compris
+  let P=0,A=0,T=0,Tt=0; jours.forEach(d=>{const x=J[d];P+=x.p;A+=x.a;Tt+=x.t;if(d<=td)T+=x.t;});
+  return {jours,J,P,A,T,Tt};
+}
+function renderSemaine(){
+  const box=$('#s-wk'); if(!box) return;
+  const W=totauxSemaine();
+  if(!W){box.innerHTML='';$('#s-tot').textContent='';return;}
+  const td=aujourdhui(), max=Math.max(60,...W.jours.map(d=>Math.max(W.J[d].t,W.J[d].p+W.J[d].a)));
+  $('#s-tot').textContent=fmtDur(W.P+W.A)+(W.Tt?' / '+fmtDur(W.Tt):'');
+  box.innerHTML=W.jours.map(d=>{
+    const x=W.J[d], we=!x.t&&!x.p&&!x.a, futur=d>td;
+    const ec=futur||d===td||(!x.t&&!x.p&&!x.a)?'':(classeEcart(x.e)==='ok'?'✓':fmtSigne(x.e));
+    const pc=m=>(m/max*100).toFixed(1)+'%';
+    const det=x.fer?escH(x.fer):(x.abs.length?escH(x.abs.map(a=>nomType(a.t)).join(', ')):(x.sw?escH(tr('tag_sw_court')):''));
+    return `<button type="button" class="wkd${we?' we':''}${d===td?' cur':''}${d===S.jour?' sel':''}" onclick="allerJour('${d}')">
+      <span class="dn"><span>${escH(fmtIntl(d,{weekday:'short'}))} ${+d.slice(8)}</span><i>${det}</i></span>
+      <span class="hv">${x.p||x.a?fmtDur(x.p+x.a):'—'}${x.t?`<small>/ ${fmtDur(x.t)}</small>`:''}</span>
+      <span class="tr"><span class="a" style="width:${pc(x.p+x.a)}"></span><span class="p" style="width:${pc(x.p)}"></span></span>
+      <span class="ec ${ec?classeEcart(x.e):''}">${ec}</span></button>`;
+  }).join('');
+}
+// Chiffres du bandeau de pointage (ordinateur) : theorique du jour, reste a faire, semaine
+function renderStatsHorloge(){
+  const box=$('#clk-stats'); if(!box) return;
+  const fer=ferieDe(S.jour,S.uid), th=theoMin(S.uid,S.jour,fer), tot=totalPointe(S.timbr), W=totauxSemaine();
+  const st=(l,v,c)=>`<div class="cst"><span class="l">${escH(l)}</span><span class="v ${c||''}">${v}</span></div>`;
+  let reste='—',cl='';
+  if(th>0){if(tot<th) reste=fmtDur(th-tot); else {reste='✓ '+escH(tr('k_atteint'))+(tot>th?`<small>${fmtSigne(tot-th)}</small>`:'');cl=tot>th?'pos':'ok';}}
+  box.innerHTML=st(tr('theo_jour'),fer?escH(fer):fmtDur(th))+st(tr('k_reste_faire'),reste,cl)
+    +st(tr('k_sem'),W?fmtDur(W.P+W.A)+(W.Tt?`<small>/ ${fmtDur(W.Tt)}</small>`:''):'—');
+}
 async function rafraichirJour(){
   const jour=S.jour;
   try{
@@ -2018,6 +2216,7 @@ async function rafraichirJour(){
     $('#j-err').classList.add('hidden');
   }catch(e){errBox('#j-err',e);}
   renderJour();
+  chargerSemaine();
 }
 // Etat de verrouillage du jour affiche, pour la personne connectee
 function verrouJour(){
@@ -2117,6 +2316,8 @@ function renderHorloge(){
     btn.className='clk-btn in';btn.innerHTML=ICO_IN+escH(tr('btn_in'));
   }
   renderDayline();
+  renderStatsHorloge();
+  renderSemaine();
 }
 // Frise de la journee : segments pointes, pointage en cours hachure, trait blanc = maintenant.
 function renderDayline(){
@@ -2459,6 +2660,8 @@ function renderAbsences(){
   const td=aujourdhui();
   const so=calculerSoldes(S.uid,S.abs.saldi,S.abs.mes);
   const soldes=so.length?`<div class="panel"><h2>${escH(tr('ab_soldes'))}</h2><div class="soldes">${so.map(tuileSolde).join('')}</div></div>`:'';
+  // sur ordinateur : soldes en cartes sur une ligne, sous un titre de section
+  const soldesL=so.length?`<div class="sect"><h2>${escH(tr('ab_soldes'))}</h2></div><div class="soldes soldes-l">${so.map(tuileSolde).join('')}</div>`:'';
   const f=S.abs.filtre;
   const list=S.abs.mes.filter(r=>f==='toutes'||(r.al>=td&&(r.stato==='richiesta'||r.stato==='approvata')));
   if(f!=='toutes') list.sort((a,b)=>a.dal<b.dal?-1:1);
@@ -2472,7 +2675,9 @@ function renderAbsences(){
       +(S.abs.pend.length?S.abs.pend.map(r=>ligneDemande(r,'decision')).join(''):`<div class="empty-s">${escH(tr('ab_rien_atraiter'))}</div>`)+'</div>';
     const eq=`<div class="panel"><h2>${escH(tr('ab_equipe'))}</h2>`
       +(S.abs.equipe.length?S.abs.equipe.map(r=>ligneDemande(r,'equipe')).join(''):`<div class="empty-s">${escH(tr('ab_equipe_vide'))}</div>`)+'</div>';
-    h=`<div class="abgrid"><div>${pend}${eq}</div><div>${soldes}${mes}</div></div>`;
+    h=`${soldesL}<div class="abgrid2">${pend}${mes}</div>${eq}`;
+  }else if(!S.tel){
+    h=`${soldesL}${mes}`;
   }else{
     h=`<div class="abgrid solo"><div>${soldes||mes}</div><div>${soldes?mes:''}</div></div>`;
     if(S.isGest&&S.tel) h+=`<div class="fhint" style="margin:12px 2px 0">${escH(tr('m_gest_pc'))}</div>`;
@@ -2904,15 +3109,28 @@ async function rechargerProjets(){
     errBox('#pj-err',null);
   }catch(e){errBox('#pj-err',e);}
   renderProjets();
+  // Heures reparties sur chaque projet depuis le debut du mois (colonne « Ce mois »)
+  try{
+    const d1=debutMois(aujourdhui());
+    const rows=await fetchAll(()=>sb.from('ore_ripartizione').select('progetto_id,user_id,minuti').gte('giorno',d1).order('id'));
+    const m={};rows.forEach(r=>{const x=m[r.progetto_id]||(m[r.progetto_id]={min:0,pers:new Set()});x.min+=r.minuti;x.pers.add(r.user_id);});
+    S.pjMois=m; renderProjets();
+  }catch(e){S.pjMois=null;}
 }
 function renderProjets(){
   $$('#pj-chips .chip').forEach(c=>c.classList.toggle('active',c.dataset.f===S.pjFiltre));
   const list=S.projets.filter(p=>S.pjFiltre==='tous'||p.attivo);
+  const nAct=S.projets.filter(p=>p.attivo).length, nCli=new Set(S.projets.filter(p=>p.attivo&&p.cliente).map(p=>p.cliente.trim().toLowerCase())).size;
+  $('#pj-tiles').innerHTML=kt('navy',nAct,tr('k_pj_actifs'))+kt('',S.projets.length-nAct,tr('k_pj_fermes'))+kt('',nCli,tr('k_pj_clients'));
   if(!list.length){$('#pj-table').innerHTML=`<div class="empty-s" style="padding:14px 16px">${escH(tr('proj_empty'))}</div>`;return;}
   // Noms de colonnes de la base : gardes en italien quelle que soit la langue (convention des modules EASE).
-  $('#pj-table').innerHTML=`<table class="t"><thead><tr><th></th><th>Codice</th><th>Nome</th><th>Cliente</th><th>Riferimento</th><th>${escH(tr('col_stato'))}</th></tr></thead><tbody>`
+  const M=S.pjMois||{}, maxM=Math.max(1,...Object.values(M).map(x=>x.min));
+  const cMois=p=>{const x=M[p.id];if(!S.pjMois) return '<td class="num muted">…</td><td class="num muted"></td>';
+    return x?`<td><div class="pjm"><span class="pjbar"><span style="width:${(x.min/maxM*100).toFixed(1)}%;background:${coulProj(p)}"></span></span><b>${fmtDur(x.min)}</b></div></td><td class="num">${x.pers.size}</td>`
+      :'<td><div class="pjm"><span class="pjbar"></span><b class="muted">—</b></div></td><td class="num muted">—</td>';};
+  $('#pj-table').innerHTML=`<table class="t"><thead><tr><th></th><th>Codice</th><th>Nome</th><th>Cliente</th><th>Riferimento</th><th>${escH(tr('pj_mois'))}</th><th class="num">${escH(tr('pj_pers'))}</th><th>${escH(tr('col_stato'))}</th></tr></thead><tbody>`
     +list.map(p=>`<tr class="click" onclick="editeurProjet('${p.id}')"><td><span class="sw" style="background:${coulProj(p)}"></span></td>
-      <td><b>${escH(p.codice)}</b></td><td class="trunc">${escH(p.nome)}</td><td class="trunc">${escH(p.cliente||'')}</td><td class="trunc">${escH(p.riferimento||'')}</td>
+      <td><b>${escH(p.codice)}</b></td><td class="trunc">${escH(p.nome)}</td><td class="trunc">${escH(p.cliente||'')}</td><td class="trunc">${escH(p.riferimento||'')}</td>${cMois(p)}
       <td><span class="st ${p.attivo?'on':'off'}">${escH(tr(p.attivo?'st_actif':'st_inactif'))}</span></td></tr>`).join('')
     +'</tbody></table>';
 }
@@ -3091,6 +3309,7 @@ function lignesGiorno(uid,jours,J,avecNom){
 }
 const ENTETE_GIORNO=['Giorno','Ore teoriche','Ore lavorate','Modalità','Assenza','Ore assenza','Festivo','Scarto'];
 async function exportPerso(){
+  if(S.tel) return;
   if(!S.recap.d) return;
   try{await chargerXLSX();}catch(e){toast(tr('exp_err')+e.message,'err');return;}
   const [d1,d2]=S.recap.d, wb=XLSX.utils.book_new(), jours=joursEntre(d1,d2);
@@ -3167,7 +3386,9 @@ function renderPersonnel(){
   const list=S.persList.slice().sort((a,b)=>(b.attivo-a.attivo)||a.nome.localeCompare(b.nome));
   const st=p=>!p.attivo?`<span class="st off">${escH(tr('st_inactif'))}</span>`
     :(p.mdp_provvisorio?`<span class="st wait" title="${escH(tr('pa_mdp_prov_info'))}">${escH(tr('pa_mdp_st'))}</span>`:`<span class="st on">${escH(tr('st_actif'))}</span>`);
-  $('#pa-body').innerHTML=`<div class="panel"><div class="msg-info">ℹ ${escH(tr('pa_pers_info'))}</div>`
+  const act=list.filter(p=>p.attivo), resp=act.filter(p=>['RESP_SITO','MANAGER','HR','ADMIN'].includes(p.ruolo)).length;
+  const tiles=`<div class="tiles">${kt('navy',act.length,tr('k_pa_actifs'))+kt('',resp,tr('k_pa_resp'))+kt(act.some(p=>p.mdp_provvisorio)?'amber':'',act.filter(p=>p.mdp_provvisorio).length,tr('pa_mdp_st'))+kt('',list.length-act.length,tr('k_pa_inactifs'))}</div>`;
+  $('#pa-body').innerHTML=tiles+`<div class="panel"><div class="msg-info">ℹ ${escH(tr('pa_pers_info'))}</div>`
     +(list.length?`<div class="tablewrap"><table class="t"><thead><tr><th>${escH(tr('col_pers'))}</th><th>${escH(tr('f_matricule'))}</th><th>${escH(tr('col_site'))}</th><th>${escH(tr('f_role'))}</th><th class="num">${escH(tr('col_horaire'))}</th><th>${escH(tr('f_debut'))}</th><th>${escH(tr('col_stato'))}</th></tr></thead><tbody>`
     +list.map(p=>`<tr class="click${p.attivo?'':' we'}" onclick="editeurPersonne('${p.user_id}')"><td>${escH(p.nome)}<div class="small muted">${escH(p.email||'')}</div></td><td>${escH(p.matricola||'')}</td>
       <td>${escH(nomSite(p.sito_id))}</td><td>${escH(p.ruolo?libRole(p.ruolo):'—')}</td><td class="num">${fmtDur((p.orario_min||[]).reduce((a,b)=>a+b,0))}</td>
