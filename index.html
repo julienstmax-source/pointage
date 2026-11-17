@@ -746,7 +746,7 @@ try{ if(localStorage.getItem('ease_theme')==='dark') document.documentElement.se
     .side{display:none}
     .app{flex-direction:column}
     .mtop{display:flex;align-items:center;gap:6px;position:sticky;top:0;z-index:20;min-height:56px;padding:4px 8px 4px 14px;
-      padding-top:max(4px,env(safe-area-inset-top));background:linear-gradient(180deg,var(--side-bg),var(--side-bg2));color:#fff;box-shadow:0 2px 10px rgba(10,20,35,.25)}
+      padding-top:calc(env(safe-area-inset-top,0px) + 6px);background:linear-gradient(180deg,var(--side-bg),var(--side-bg2));color:#fff;box-shadow:0 2px 10px rgba(10,20,35,.25)}
     .mtop-logo{flex:none;display:flex;align-items:center;padding-right:10px;margin-right:2px;border-right:1px solid rgba(255,255,255,.14);height:26px}
     .mtop-titre{flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.2;padding:0 4px}
     .mtop-titre b{font-family:'Space Grotesk',system-ui,sans-serif;font-size:12px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--side-mint)}
@@ -922,6 +922,24 @@ try{ if(localStorage.getItem('ease_theme')==='dark') document.documentElement.se
   .tolin{display:flex;align-items:center;gap:8px}
   .tolin input{width:90px;text-align:center}
   .tolin span{color:var(--muted);font-size:var(--fs-3)}
+
+  /* demandes de correction */
+  .corrl:empty{display:none}
+  .corrl{margin-top:10px;border-top:1px solid var(--line);padding-top:8px}
+  .corrh{font-size:var(--fs-1);font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);margin-bottom:4px}
+  .corri{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"l1 rt" "l2 rt";gap:1px 10px;padding:6px 0;border-bottom:1px dashed var(--line);align-items:center}
+  .corri:last-child{border-bottom:0}
+  .corri .l1{grid-area:l1;font-size:var(--fs-3);display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+  .corri .l2{grid-area:l2;font-size:var(--fs-2);color:var(--muted)}
+  .corri .rt{grid-area:rt;display:flex;gap:6px;align-items:center}
+  .corri .mono,.rq .mono{font-family:'IBM Plex Mono',monospace;font-size:var(--fs-2)}
+  .corri .ar{color:var(--muted)}
+  .j-pts .prow.click .du::after{content:'✎';margin-left:6px;color:var(--muted);font-size:11px}
+
+  /* iPhone (application sur l'ecran d'accueil) : la zone de l'heure et de la batterie est sombre comme la barre du haut,
+     y compris quand on tire la page vers le bas ; avant, le fond clair de la page remontait sous l'heure et paraissait flou */
+  html.tel{background-color:#0f1d30}
+  html.tel body{min-height:100vh;min-height:100dvh}
 </style>
 </head>
 <body>
@@ -936,9 +954,10 @@ try{ if(localStorage.getItem('ease_theme')==='dark') document.documentElement.se
       <nav class="nav" id="nav">
         <div class="nav-group-label nav-pliable" data-groupe="moi" role="button" tabindex="0" aria-expanded="true"><span data-i="nav_sec_moi">Mon temps</span><span class="nav-pli" aria-hidden="true">−</span></div>
         <button data-view="jour" class="active"><span class="dot"></span><span data-i="nav_jour">Journée</span></button>
-        <button data-view="absences"><span class="dot"></span><span data-i="nav_abs">Absences</span><span class="nbadge hidden" data-badge="abs"></span></button>
+        <button data-view="absences"><span class="dot"></span><span data-i="nav_abs">Absences</span></button>
         <button data-view="recap"><span class="dot"></span><span data-i="nav_recap">Récap</span></button>
         <div class="nav-group-label nav-pliable gest hidden" data-groupe="gest" role="button" tabindex="0" aria-expanded="true"><span data-i="nav_sec_gest">Équipe et projets</span><span class="nav-pli" aria-hidden="true">−</span></div>
+        <button data-view="demandes" class="gest hidden"><span class="dot"></span><span data-i="nav_dem">Demandes</span><span class="nbadge hidden" data-badge="abs"></span></button>
         <button data-view="valider" class="gest hidden"><span class="dot"></span><span data-i="nav_valider">Validation</span></button>
         <button data-view="synthese" class="gest hidden"><span class="dot"></span><span data-i="nav_synth">Synthèse projets</span></button>
         <button data-view="projets" class="proj hidden"><span class="dot"></span><span data-i="nav_projets">Projets</span></button>
@@ -1000,7 +1019,8 @@ try{ if(localStorage.getItem('ease_theme')==='dark') document.documentElement.se
             <div class="panel j-pts">
               <div class="phead"><h2 data-i="h_pointages">Pointages</h2><span class="pill" id="j-tot">0h00</span></div>
               <div id="j-list" class="plist"></div>
-              <button class="btn ghost sm addbtn" id="j-add" onclick="ouvrirEditeur(null)" data-i="add_manual">+ Ajouter à la main</button>
+              <div id="j-corr" class="corrl"></div>
+              <button class="btn ghost sm addbtn" id="j-add" onclick="demanderCorrection(null)" data-i="corr_btn">+ Signaler un oubli ou une erreur</button>
             </div>
             <div class="panel j-rep">
               <div class="phead"><h2 data-i="h_repart">Répartition sur les projets</h2><span class="saved" id="r-saved"></span></div>
@@ -1028,6 +1048,17 @@ try{ if(localStorage.getItem('ease_theme')==='dark') document.documentElement.se
         </div>
         <div id="ab-err" class="msg-err hidden"></div>
         <div id="ab-body"></div>
+      </section>
+
+      <!-- ================= DEMANDES (gestion d'equipe) ================= -->
+      <section class="view hidden" id="v-demandes">
+        <div class="head">
+          <div><h1 data-i="nav_dem">Demandes</h1><div class="sub" data-i="dem_sub"></div></div>
+        </div>
+        <div class="tbar"><span id="de-site"></span></div>
+        <div id="de-err" class="msg-err hidden"></div>
+        <div class="tiles" id="de-tiles"></div>
+        <div id="de-body"></div>
       </section>
 
       <!-- ================= RECAP ================= -->
@@ -1180,7 +1211,7 @@ document.querySelectorAll('script[type="text/plain"][data-global]').forEach(src=
     get(){ delete window[nom]; const x=document.createElement('script'); x.textContent=src.textContent; document.head.appendChild(x); return window[nom]; },
     set(v){ delete window[nom]; window[nom]=v; }});
 });
-const EASE_VERSION='17/11/2026 19:00';   // date d'assemblage, inscrite par assembler.py
+const EASE_VERSION='17/11/2026 21:30';   // date d'assemblage, inscrite par assembler.py
 const Ease=(()=>{
   const T=(fr,it,en)=>typeof L3==='function'?L3(fr,it,en):fr;
   const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -1557,9 +1588,9 @@ let lang='fr';
 const LOC={fr:'fr-FR',it:'it-IT',en:'en-GB'};
 const L3=(fr,it,en)=>lang==='fr'?fr:(lang==='en'?en:it);
 const I={
-  fr:{loading:'Chargement…',brand:'Pointage',brand_sub:'Présences et heures',nav_sec_moi:'Mon temps',nav_prec:'Précédent',nav_suiv:'Suivant',m_compte:'Mon compte',e_reseau:'Pas de connexion au serveur. Vérifie le réseau puis réessaie : rien n’a été enregistré.',e_session:'Ta session a expiré. Reconnecte-toi.',f_aucun:'Personne ne correspond à ce filtre. Cliquer à nouveau sur la tuile pour tout afficher.',
-    nav_jour:'Journée',nav_abs:'Absences',nav_recap:'Récap',nav_sec_gest:'Équipe et projets',nav_valider:'Validation',nav_synth:'Synthèse projets',
-    nav_projets:'Projets',nav_sec_rh:'Administration',nav_cloture:'Clôture du mois',nav_params:'Paramètres',nav_journal:'Journal',
+  fr:{loading:'Chargement…',brand:'Pointage',brand_sub:'Présences et heures',nav_sec_moi:'Mon espace',nav_prec:'Précédent',nav_suiv:'Suivant',m_compte:'Mon compte',e_reseau:'Pas de connexion au serveur. Vérifie le réseau puis réessaie : rien n’a été enregistré.',e_session:'Ta session a expiré. Reconnecte-toi.',f_aucun:'Personne ne correspond à ce filtre. Cliquer à nouveau sur la tuile pour tout afficher.',
+    nav_jour:'Journée',nav_abs:'Absences',nav_recap:'Récap',nav_sec_gest:'Gestion d’équipe',nav_valider:'Validation',nav_synth:'Synthèse projets',
+    nav_projets:'Projets',nav_sec_rh:'Paramétrage et clôture',nav_cloture:'Clôture du mois',nav_params:'Paramètres',nav_journal:'Journal',
     signout:'Déconnexion',gate_err:'Erreur de chargement des accès : ',
     gate_denied:'Ton compte n’a pas (ou plus) accès à l’outil de pointage. Contacte la RH.',
     err_tables:'Les tables de l’outil n’existent pas encore dans Supabase : il faut d’abord exécuter ore_autonome.sql.',
@@ -1617,7 +1648,7 @@ const I={
     e_dem_figee:'Cette demande ne peut plus être modifiée.',e_chevauch:'Une demande existe déjà sur ces dates.',e_type:'Type d’absence inconnu ou désactivé.',
     e_periode:'Période trop longue (un an maximum).',e_introuvable:'Élément introuvable (déjà supprimé ?).',e_doublon:'Cet élément existe déjà.',
     e_fk:'Élément utilisé ailleurs : désactive-le plutôt que de le supprimer.',e_dates:'Dates invalides.',e_heures:'Heures invalides.',
-    abs_sub:'Congés, permis, maladie et télétravail.',jour_sub:'Pointage du jour, détail des pointages et répartition sur les projets.',h_recap_j:'Récapitulatif',tol_lib:'Tolérance',tol_val:'±{m} min/jour',tol_var:'selon le site',tol_titre:'Tolérance d’écart par jour',tol_info:'Un jour dont l’écart avec l’horaire théorique reste dans la tolérance s’affiche ✓. Les totaux de la semaine et du mois restent exacts.',tol_min_j:'min par jour',tol_err:'Entre 0 et 120 minutes.',vc_btn:'Voir comme…',vc_titre:'Voir l’outil comme…',vc_info:'Tu vois exactement ce que voit la personne choisie : menus, pages et données. Lecture seule : aucune modification n’est possible.',vc_cherche:'Rechercher une personne, un rôle, un site',vc_bandeau:'Tu vois l’outil comme {n}',vc_ro:'lecture seule',vc_changer:'Changer',vc_quitter:'Revenir à mon compte',vc_refus:'Lecture seule : tu vois l’outil comme {n}. Reviens à ton compte pour modifier.',clk_hors:'Hors poste',seg_hebdo:'Hebdomadaire',seg_mensuel:'Mensuel',rj_reparti:'{r} réparties sur {p} pointées',rj_nonrep:'{h} pointées pas encore réparties.',clk_proj_choisir:'— Choisir un projet —',err_proj_requis:'Choisis d’abord le projet sur lequel tu travailles.',err_proj_aucun:'Aucun projet ouvert : demande à ton responsable d’en créer un avant de pointer.',f_projet:'Projet',recap_sub:'Vos heures de la semaine ou du mois : pointé, absences, écart et projets.',k_pj_actifs:'Projets actifs',k_pj_fermes:'Projets fermés',k_pj_clients:'Clients',pj_mois:'Réparti ce mois',pj_pers:'Personnes',k_pa_actifs:'Fiches actives',k_pa_resp:'Responsables, RH et admin',k_pa_inactifs:'Fiches désactivées',abs_new:'+ Nouvelle demande',abs_new_t:'Nouvelle demande',
+    abs_sub:'Mes congés, permis, maladie et télétravail : soldes et demandes.',jour_sub:'Pointage du jour, détail des pointages et répartition sur les projets.',h_recap_j:'Récapitulatif',corr_btn:'+ Signaler un oubli ou une erreur',corr_titre_new:'Signaler un pointage oublié',corr_titre:'Demander une correction',corr_info:'Ton responsable reçoit la demande et l’accepte ou la refuse. Le pointage n’est modifié qu’après son accord.',corr_modif:'Modifier',corr_suppr:'Supprimer ce pointage',corr_suppr_court:'supprimer',corr_actuel:'Pointage actuel',corr_motif:'Raison',corr_r1:'Oubli de pointage',corr_r2:'Mauvais projet',corr_r3:'Erreur d’heure',corr_r4:'Pointé deux fois',corr_envoyer:'Envoyer la demande',corr_ok:'Demande de correction envoyée à ton responsable.',corr_mes:'Mes demandes de correction',corr_tag:'correction demandée',corr_t_modifica:'Modification',corr_t_aggiunta:'Ajout',corr_t_eliminazione:'Suppression',corr_atraiter:'Corrections de pointage à décider',corr_rien:'Aucune correction à décider.',corr_k:'Corrections à traiter',corr_refus_t:'Refuser la correction',corr_acc_ok:'Correction appliquée.',corr_ref_ok:'Correction refusée.',corr_rien_change:'Rien n’a changé par rapport au pointage actuel.',nav_dem:'Demandes',dem_sub:'Absences, télétravail et corrections de pointage à décider, et absences prévues dans l’équipe.',dem_abs_auj:'Absents aujourd’hui',dem_sw_auj:'En télétravail aujourd’hui',dem_30j:'Absences prévues (30 j)',tol_lib:'Tolérance',tol_val:'±{m} min/jour',tol_var:'selon le site',tol_titre:'Tolérance d’écart par jour',tol_info:'Un jour dont l’écart avec l’horaire théorique reste dans la tolérance s’affiche ✓. Les totaux de la semaine et du mois restent exacts.',tol_min_j:'min par jour',tol_err:'Entre 0 et 120 minutes.',vc_btn:'Voir comme…',vc_titre:'Voir l’outil comme…',vc_info:'Tu vois exactement ce que voit la personne choisie : menus, pages et données. Lecture seule : aucune modification n’est possible.',vc_cherche:'Rechercher une personne, un rôle, un site',vc_bandeau:'Tu vois l’outil comme {n}',vc_ro:'lecture seule',vc_changer:'Changer',vc_quitter:'Revenir à mon compte',vc_refus:'Lecture seule : tu vois l’outil comme {n}. Reviens à ton compte pour modifier.',clk_hors:'Hors poste',seg_hebdo:'Hebdomadaire',seg_mensuel:'Mensuel',rj_reparti:'{r} réparties sur {p} pointées',rj_nonrep:'{h} pointées pas encore réparties.',clk_proj_choisir:'— Choisir un projet —',err_proj_requis:'Choisis d’abord le projet sur lequel tu travailles.',err_proj_aucun:'Aucun projet ouvert : demande à ton responsable d’en créer un avant de pointer.',f_projet:'Projet',recap_sub:'Vos heures de la semaine ou du mois : pointé, absences, écart et projets.',k_pj_actifs:'Projets actifs',k_pj_fermes:'Projets fermés',k_pj_clients:'Clients',pj_mois:'Réparti ce mois',pj_pers:'Personnes',k_pa_actifs:'Fiches actives',k_pa_resp:'Responsables, RH et admin',k_pa_inactifs:'Fiches désactivées',abs_new:'+ Nouvelle demande',abs_new_t:'Nouvelle demande',
     ab_atraiter:'Demandes à traiter',ab_rien_atraiter:'Aucune demande en attente.',ab_soldes:'Mes soldes',ab_mes:'Mes demandes',ab_avenir:'À venir',
     ab_toutes:'Toutes',ab_aucune:'Aucune demande.',ab_aucune_avenir:'Rien de prévu.',ab_equipe:'Absences de l’équipe (30 prochains jours)',
     ab_equipe_vide:'Personne d’absent.',ab_accepter:'Accepter',ab_refuser:'Refuser',ab_refuser_t:'Refuser la demande',ab_annuler:'Annuler',
@@ -1686,9 +1717,9 @@ const I={
     ac_INSERT:'création',ac_UPDATE:'modification',ac_DELETE:'suppression',
     tb_ore_timbrature:'Pointage',tb_ore_ripartizione:'Répartition',tb_ore_richieste:'Demande',tb_ore_validazioni:'Validation',tb_ore_chiusure:'Clôture',
     tb_ore_esiti_mese:'Décision RH',tb_ore_dipendenti:'Fiche personnel',tb_ore_saldi:'Solde',tb_ore_tipi_assenza:'Type d’absence',tb_ore_festivita:'Jour férié'},
-  it:{loading:'Caricamento…',brand:'Timbrature',brand_sub:'Presenze e ore',nav_sec_moi:'Il mio tempo',nav_prec:'Precedente',nav_suiv:'Successivo',m_compte:'Il mio account',e_reseau:'Nessuna connessione al server. Controlla la rete e riprova: non è stato salvato nulla.',e_session:'La sessione è scaduta. Accedi di nuovo.',f_aucun:'Nessuno corrisponde a questo filtro. Clicca di nuovo sul riquadro per vedere tutti.',
-    nav_jour:'Giornata',nav_abs:'Assenze',nav_recap:'Riepilogo',nav_sec_gest:'Team e progetti',nav_valider:'Convalida',nav_synth:'Sintesi progetti',
-    nav_projets:'Progetti',nav_sec_rh:'Amministrazione',nav_cloture:'Chiusura del mese',nav_params:'Impostazioni',nav_journal:'Registro',
+  it:{loading:'Caricamento…',brand:'Timbrature',brand_sub:'Presenze e ore',nav_sec_moi:'Il mio spazio',nav_prec:'Precedente',nav_suiv:'Successivo',m_compte:'Il mio account',e_reseau:'Nessuna connessione al server. Controlla la rete e riprova: non è stato salvato nulla.',e_session:'La sessione è scaduta. Accedi di nuovo.',f_aucun:'Nessuno corrisponde a questo filtro. Clicca di nuovo sul riquadro per vedere tutti.',
+    nav_jour:'Giornata',nav_abs:'Assenze',nav_recap:'Riepilogo',nav_sec_gest:'Gestione del team',nav_valider:'Convalida',nav_synth:'Sintesi progetti',
+    nav_projets:'Progetti',nav_sec_rh:'Impostazioni e chiusura',nav_cloture:'Chiusura del mese',nav_params:'Impostazioni',nav_journal:'Registro',
     signout:'Disconnetti',gate_err:'Errore nel caricamento degli accessi: ',
     gate_denied:'Il tuo account non ha (o non ha più) accesso allo strumento di timbratura. Contatta le Risorse umane.',
     err_tables:'Le tabelle dello strumento non esistono ancora in Supabase: bisogna prima eseguire ore_autonome.sql.',
@@ -1746,7 +1777,7 @@ const I={
     e_dem_figee:'Questa richiesta non può più essere modificata.',e_chevauch:'Esiste già una richiesta su queste date.',e_type:'Tipo di assenza sconosciuto o disattivato.',
     e_periode:'Periodo troppo lungo (massimo un anno).',e_introuvable:'Elemento non trovato (già eliminato?).',e_doublon:'Questo elemento esiste già.',
     e_fk:'Elemento usato altrove: disattivalo invece di eliminarlo.',e_dates:'Date non valide.',e_heures:'Orari non validi.',
-    abs_sub:'Ferie, permessi, malattia e lavoro agile.',jour_sub:'Timbratura del giorno, dettaglio delle timbrature e ripartizione sui progetti.',h_recap_j:'Riepilogo',tol_lib:'Tolleranza',tol_val:'±{m} min/giorno',tol_var:'secondo il sito',tol_titre:'Tolleranza di scostamento giornaliera',tol_info:'Un giorno il cui scostamento dall’orario teorico resta nella tolleranza appare ✓. I totali della settimana e del mese restano esatti.',tol_min_j:'min al giorno',tol_err:'Tra 0 e 120 minuti.',vc_btn:'Vedi come…',vc_titre:'Vedi lo strumento come…',vc_info:'Vedi esattamente ciò che vede la persona scelta: menu, pagine e dati. Sola lettura: nessuna modifica è possibile.',vc_cherche:'Cerca una persona, un ruolo, un sito',vc_bandeau:'Stai vedendo lo strumento come {n}',vc_ro:'sola lettura',vc_changer:'Cambia',vc_quitter:'Torna al mio account',vc_refus:'Sola lettura: stai vedendo lo strumento come {n}. Torna al tuo account per modificare.',clk_hors:'Fuori servizio',seg_hebdo:'Settimanale',seg_mensuel:'Mensile',rj_reparti:'{r} ripartite su {p} timbrate',rj_nonrep:'{h} timbrate non ancora ripartite.',clk_proj_choisir:'— Scegli un progetto —',err_proj_requis:'Scegli prima il progetto su cui lavori.',err_proj_aucun:'Nessun progetto aperto: chiedi al tuo responsabile di crearne uno prima di timbrare.',f_projet:'Progetto',recap_sub:'Le tue ore della settimana o del mese: timbrato, assenze, scostamento e progetti.',k_pj_actifs:'Progetti attivi',k_pj_fermes:'Progetti chiusi',k_pj_clients:'Clienti',pj_mois:'Ripartito questo mese',pj_pers:'Persone',k_pa_actifs:'Schede attive',k_pa_resp:'Responsabili, RU e admin',k_pa_inactifs:'Schede disattivate',abs_new:'+ Nuova richiesta',abs_new_t:'Nuova richiesta',
+    abs_sub:'Le mie ferie, permessi, malattia e lavoro agile: saldi e richieste.',jour_sub:'Timbratura del giorno, dettaglio delle timbrature e ripartizione sui progetti.',h_recap_j:'Riepilogo',corr_btn:'+ Segnala una dimenticanza o un errore',corr_titre_new:'Segnalare una timbratura dimenticata',corr_titre:'Chiedere una correzione',corr_info:'Il tuo responsabile riceve la richiesta e la approva o la rifiuta. La timbratura viene modificata solo dopo il suo accordo.',corr_modif:'Modificare',corr_suppr:'Eliminare questa timbratura',corr_suppr_court:'eliminare',corr_actuel:'Timbratura attuale',corr_motif:'Motivo',corr_r1:'Timbratura dimenticata',corr_r2:'Progetto sbagliato',corr_r3:'Orario sbagliato',corr_r4:'Timbrato due volte',corr_envoyer:'Invia la richiesta',corr_ok:'Richiesta di correzione inviata al tuo responsabile.',corr_mes:'Le mie richieste di correzione',corr_tag:'correzione richiesta',corr_t_modifica:'Modifica',corr_t_aggiunta:'Aggiunta',corr_t_eliminazione:'Eliminazione',corr_atraiter:'Correzioni di timbratura da decidere',corr_rien:'Nessuna correzione da decidere.',corr_k:'Correzioni da gestire',corr_refus_t:'Rifiutare la correzione',corr_acc_ok:'Correzione applicata.',corr_ref_ok:'Correzione rifiutata.',corr_rien_change:'Nulla è cambiato rispetto alla timbratura attuale.',nav_dem:'Richieste',dem_sub:'Assenze, lavoro agile e correzioni di timbratura da decidere, e assenze previste nel team.',dem_abs_auj:'Assenti oggi',dem_sw_auj:'In lavoro agile oggi',dem_30j:'Assenze previste (30 g)',tol_lib:'Tolleranza',tol_val:'±{m} min/giorno',tol_var:'secondo il sito',tol_titre:'Tolleranza di scostamento giornaliera',tol_info:'Un giorno il cui scostamento dall’orario teorico resta nella tolleranza appare ✓. I totali della settimana e del mese restano esatti.',tol_min_j:'min al giorno',tol_err:'Tra 0 e 120 minuti.',vc_btn:'Vedi come…',vc_titre:'Vedi lo strumento come…',vc_info:'Vedi esattamente ciò che vede la persona scelta: menu, pagine e dati. Sola lettura: nessuna modifica è possibile.',vc_cherche:'Cerca una persona, un ruolo, un sito',vc_bandeau:'Stai vedendo lo strumento come {n}',vc_ro:'sola lettura',vc_changer:'Cambia',vc_quitter:'Torna al mio account',vc_refus:'Sola lettura: stai vedendo lo strumento come {n}. Torna al tuo account per modificare.',clk_hors:'Fuori servizio',seg_hebdo:'Settimanale',seg_mensuel:'Mensile',rj_reparti:'{r} ripartite su {p} timbrate',rj_nonrep:'{h} timbrate non ancora ripartite.',clk_proj_choisir:'— Scegli un progetto —',err_proj_requis:'Scegli prima il progetto su cui lavori.',err_proj_aucun:'Nessun progetto aperto: chiedi al tuo responsabile di crearne uno prima di timbrare.',f_projet:'Progetto',recap_sub:'Le tue ore della settimana o del mese: timbrato, assenze, scostamento e progetti.',k_pj_actifs:'Progetti attivi',k_pj_fermes:'Progetti chiusi',k_pj_clients:'Clienti',pj_mois:'Ripartito questo mese',pj_pers:'Persone',k_pa_actifs:'Schede attive',k_pa_resp:'Responsabili, RU e admin',k_pa_inactifs:'Schede disattivate',abs_new:'+ Nuova richiesta',abs_new_t:'Nuova richiesta',
     ab_atraiter:'Richieste da gestire',ab_rien_atraiter:'Nessuna richiesta in attesa.',ab_soldes:'I miei saldi',ab_mes:'Le mie richieste',ab_avenir:'Prossime',
     ab_toutes:'Tutte',ab_aucune:'Nessuna richiesta.',ab_aucune_avenir:'Niente in programma.',ab_equipe:'Assenze del team (prossimi 30 giorni)',
     ab_equipe_vide:'Nessun assente.',ab_accepter:'Approva',ab_refuser:'Rifiuta',ab_refuser_t:'Rifiuta la richiesta',ab_annuler:'Annulla',
@@ -1815,9 +1846,9 @@ const I={
     ac_INSERT:'creazione',ac_UPDATE:'modifica',ac_DELETE:'eliminazione',
     tb_ore_timbrature:'Timbratura',tb_ore_ripartizione:'Ripartizione',tb_ore_richieste:'Richiesta',tb_ore_validazioni:'Convalida',tb_ore_chiusure:'Chiusura',
     tb_ore_esiti_mese:'Decisione RU',tb_ore_dipendenti:'Scheda personale',tb_ore_saldi:'Saldo',tb_ore_tipi_assenza:'Tipo di assenza',tb_ore_festivita:'Festività'},
-  en:{loading:'Loading…',brand:'Timesheet',brand_sub:'Attendance and hours',nav_sec_moi:'My time',nav_prec:'Previous',nav_suiv:'Next',m_compte:'My account',e_reseau:'No connection to the server. Check the network and try again: nothing was saved.',e_session:'Your session has expired. Please sign in again.',f_aucun:'Nobody matches this filter. Click the tile again to show everyone.',
-    nav_jour:'Day',nav_abs:'Leave',nav_recap:'Summary',nav_sec_gest:'Team and projects',nav_valider:'Approval',nav_synth:'Project summary',
-    nav_projets:'Projects',nav_sec_rh:'Administration',nav_cloture:'Month close',nav_params:'Settings',nav_journal:'Audit log',
+  en:{loading:'Loading…',brand:'Timesheet',brand_sub:'Attendance and hours',nav_sec_moi:'My space',nav_prec:'Previous',nav_suiv:'Next',m_compte:'My account',e_reseau:'No connection to the server. Check the network and try again: nothing was saved.',e_session:'Your session has expired. Please sign in again.',f_aucun:'Nobody matches this filter. Click the tile again to show everyone.',
+    nav_jour:'Day',nav_abs:'Leave',nav_recap:'Summary',nav_sec_gest:'Team management',nav_valider:'Approval',nav_synth:'Project summary',
+    nav_projets:'Projects',nav_sec_rh:'Settings and closing',nav_cloture:'Month close',nav_params:'Settings',nav_journal:'Audit log',
     signout:'Sign out',gate_err:'Error loading access rights: ',
     gate_denied:'Your account doesn’t have (or no longer has) access to the timesheet tool. Please contact HR.',
     err_tables:'The tool’s tables don’t exist in Supabase yet: run ore_autonome.sql first.',
@@ -1875,7 +1906,7 @@ const I={
     e_dem_figee:'This request can no longer be changed.',e_chevauch:'A request already exists for these dates.',e_type:'Unknown or inactive leave type.',
     e_periode:'Period too long (one year maximum).',e_introuvable:'Item not found (already deleted?).',e_doublon:'This item already exists.',
     e_fk:'Item used elsewhere: deactivate it instead of deleting it.',e_dates:'Invalid dates.',e_heures:'Invalid times.',
-    abs_sub:'Annual leave, permits, sick leave and remote work.',jour_sub:'Today\'s clocking, punch details and split across projects.',h_recap_j:'Summary',tol_lib:'Tolerance',tol_val:'±{m} min/day',tol_var:'per site',tol_titre:'Daily gap tolerance',tol_info:'A day whose gap from the scheduled hours stays within the tolerance shows ✓. Weekly and monthly totals stay exact.',tol_min_j:'min per day',tol_err:'Between 0 and 120 minutes.',vc_btn:'View as…',vc_titre:'View the tool as…',vc_info:'You see exactly what the chosen person sees: menus, pages and data. Read-only: no change is possible.',vc_cherche:'Search a person, a role, a site',vc_bandeau:'You are viewing the tool as {n}',vc_ro:'read-only',vc_changer:'Change',vc_quitter:'Back to my account',vc_refus:'Read-only: you are viewing the tool as {n}. Go back to your account to make changes.',clk_hors:'Off duty',seg_hebdo:'Weekly',seg_mensuel:'Monthly',rj_reparti:'{r} split out of {p} clocked',rj_nonrep:'{h} clocked, not yet split.',clk_proj_choisir:'— Choose a project —',err_proj_requis:'First choose the project you are working on.',err_proj_aucun:'No open project: ask your manager to create one before clocking in.',f_projet:'Project',recap_sub:'Your hours for the week or month: clocked, absences, gap and projects.',k_pj_actifs:'Active projects',k_pj_fermes:'Closed projects',k_pj_clients:'Clients',pj_mois:'Split this month',pj_pers:'People',k_pa_actifs:'Active records',k_pa_resp:'Managers, HR and admin',k_pa_inactifs:'Deactivated records',abs_new:'+ New request',abs_new_t:'New request',
+    abs_sub:'My leave, permits, sick leave and remote work: balances and requests.',jour_sub:'Today\'s clocking, punch details and split across projects.',h_recap_j:'Summary',corr_btn:'+ Report a missing punch or an error',corr_titre_new:'Report a missing punch',corr_titre:'Request a correction',corr_info:'Your manager receives the request and approves or refuses it. The punch only changes once approved.',corr_modif:'Change',corr_suppr:'Delete this punch',corr_suppr_court:'delete',corr_actuel:'Current punch',corr_motif:'Reason',corr_r1:'Forgot to punch',corr_r2:'Wrong project',corr_r3:'Wrong time',corr_r4:'Punched twice',corr_envoyer:'Send request',corr_ok:'Correction request sent to your manager.',corr_mes:'My correction requests',corr_tag:'correction requested',corr_t_modifica:'Change',corr_t_aggiunta:'Addition',corr_t_eliminazione:'Deletion',corr_atraiter:'Punch corrections to decide',corr_rien:'No correction to decide.',corr_k:'Corrections to handle',corr_refus_t:'Refuse the correction',corr_acc_ok:'Correction applied.',corr_ref_ok:'Correction refused.',corr_rien_change:'Nothing changed compared with the current punch.',nav_dem:'Requests',dem_sub:'Leave, remote work and punch corrections to decide, and planned absences in the team.',dem_abs_auj:'Absent today',dem_sw_auj:'Remote today',dem_30j:'Planned absences (30 d)',tol_lib:'Tolerance',tol_val:'±{m} min/day',tol_var:'per site',tol_titre:'Daily gap tolerance',tol_info:'A day whose gap from the scheduled hours stays within the tolerance shows ✓. Weekly and monthly totals stay exact.',tol_min_j:'min per day',tol_err:'Between 0 and 120 minutes.',vc_btn:'View as…',vc_titre:'View the tool as…',vc_info:'You see exactly what the chosen person sees: menus, pages and data. Read-only: no change is possible.',vc_cherche:'Search a person, a role, a site',vc_bandeau:'You are viewing the tool as {n}',vc_ro:'read-only',vc_changer:'Change',vc_quitter:'Back to my account',vc_refus:'Read-only: you are viewing the tool as {n}. Go back to your account to make changes.',clk_hors:'Off duty',seg_hebdo:'Weekly',seg_mensuel:'Monthly',rj_reparti:'{r} split out of {p} clocked',rj_nonrep:'{h} clocked, not yet split.',clk_proj_choisir:'— Choose a project —',err_proj_requis:'First choose the project you are working on.',err_proj_aucun:'No open project: ask your manager to create one before clocking in.',f_projet:'Project',recap_sub:'Your hours for the week or month: clocked, absences, gap and projects.',k_pj_actifs:'Active projects',k_pj_fermes:'Closed projects',k_pj_clients:'Clients',pj_mois:'Split this month',pj_pers:'People',k_pa_actifs:'Active records',k_pa_resp:'Managers, HR and admin',k_pa_inactifs:'Deactivated records',abs_new:'+ New request',abs_new_t:'New request',
     ab_atraiter:'Requests to handle',ab_rien_atraiter:'No pending requests.',ab_soldes:'My balances',ab_mes:'My requests',ab_avenir:'Upcoming',
     ab_toutes:'All',ab_aucune:'No requests.',ab_aucune_avenir:'Nothing planned.',ab_equipe:'Team leave (next 30 days)',
     ab_equipe_vide:'Nobody away.',ab_accepter:'Approve',ab_refuser:'Refuse',ab_refuser_t:'Refuse the request',ab_annuler:'Cancel',
@@ -2356,6 +2387,7 @@ async function rafraichirJour(){
     const [,res]=await Promise.all([chargerOuverte(),chargerJour(jour)]);
     if(jour!==S.jour) return; // la personne a change de jour entre-temps
     S.timbr=res.t; S.rip=res.r; S.jourRq=res.rq; S.jourVal=res.v;
+    try{const c=await sb.from('ore_correzioni').select('*').eq('user_id',S.uid).eq('giorno',jour).order('created_at');S.corrJour=c.error?[]:(c.data||[]);}catch(e){S.corrJour=[];}
     $('#j-err').classList.add('hidden');
   }catch(e){errBox('#j-err',e);}
   renderJour();
@@ -2385,7 +2417,7 @@ function renderJour(){
   if(lock==='clos'){lk.innerHTML='🔒 '+escH(tr('lock_clos'));lk.classList.remove('hidden');}
   else if(lock==='valide'){lk.innerHTML='🔒 '+escH(tr('lock_valide',{n:nomDe(S.jourVal.validata_da),d:fmtQuand(S.jourVal.validata_il).slice(0,10)}));lk.classList.remove('hidden');}
   else lk.classList.add('hidden');
-  $('#j-add').classList.toggle('hidden',!!lock||S.tel||!peutSaisirMain());
+  $('#j-add').classList.toggle('hidden',lock==='clos'||lock==='futur');
   renderHorloge();
   renderPointages();
   renderRepart();
@@ -2493,7 +2525,7 @@ function chevauchements(rows){
   return ov;
 }
 // Une ligne de pointage (Journee et fenetre « Journee de... » des responsables)
-function lignePointage(r,ov,clic){
+function lignePointage(r,ov,clic,corrDem){
   const open=r.uscita==null, brut=open?Math.floor(secDepuis(r.giorno,r.entrata)/60):duree(r.entrata,r.uscita);
   const oubli=open&&brut>OUBLI_MIN, nuit=!open&&minDe(r.uscita)<minDe(r.entrata);
   const tags=(oubli?`<span class="tag warn">${escH(tr('oubli'))}</span>`:'')
@@ -2501,7 +2533,8 @@ function lignePointage(r,ov,clic){
     +(r.progetto_id&&S.projById[r.progetto_id]?`<span class="tag proj"><span class="sw" style="background:${(coulProj(S.projById[r.progetto_id]))}"></span>${escH(S.projById[r.progetto_id].codice)}</span>`:'')
     +(r.modalita==='lavoro_agile'?`<span class="tag sw">${escH(tr('tag_sw'))}</span>`:'')
     +(r.origine==='manuale'?`<span class="tag">${escH(tr('badge_manual'))}</span>`:'')
-    +(r.origine==='correzione'?`<span class="tag corr" title="${escH(r.motivo||'')}">${escH(tr('badge_corr'))}</span>`:'');
+    +(r.origine==='correzione'?`<span class="tag corr" title="${escH(r.motivo||'')}">${escH(tr('badge_corr'))}</span>`:'')
+    +(corrDem?`<span class="tag live">${escH(tr('corr_tag'))}</span>`:'');
   const sous=[r.nota,r.origine==='correzione'&&r.motivo?tr('motif')+' : '+r.motivo:''].filter(Boolean).join(' · ');
   return `<div class="prow${clic?' click':''}" ${clic?`onclick="${clic}"`:''}>
     <div class="tm">${hm(r.entrata)}<span class="ar">→</span>${open?`<span class="tag live">${escH(tr('en_cours'))}</span>`:hm(r.uscita)+(nuit?'<sup>+1</sup>':'')}
@@ -2514,10 +2547,11 @@ function renderPointages(){
   const rows=S.timbr, tot=totalPointe(rows);
   $('#j-tot').textContent=fmtDur(tot);
   // Sur telephone, les pointages se lisent ; les corrections se font sur ordinateur (sortie oubliee : bouton de pointage)
-  const aide='';
-  if(!rows.length){$('#j-list').innerHTML=`<div class="empty-s">${escH(tr('empty_punch'))}</div>`+aide;return;}
-  const ov=chevauchements(rows);
-  $('#j-list').innerHTML=rows.map(r=>lignePointage(r,ov,S.tel||!peutSaisirMain()?null:`ouvrirEditeur('${r.id}')`)).join('')+aide;
+  renderCorrJour();
+  if(!rows.length){$('#j-list').innerHTML=`<div class="empty-s">${escH(tr('empty_punch'))}</div>`;return;}
+  const ov=chevauchements(rows), clos=moisClos(S.jour);
+  const enCours=new Set((S.corrJour||[]).filter(c=>c.stato==='richiesta'&&c.timbratura_id).map(c=>c.timbratura_id));
+  $('#j-list').innerHTML=rows.map(r=>lignePointage(r,ov,clos?null:`demanderCorrection('${r.id}')`,enCours.has(r.id))).join('');
 }
 
 // ---- Pointage par le bouton : l'heure est celle du serveur (fonction ore_timbra) ----
@@ -2557,6 +2591,103 @@ async function pointer(){
 function trouverPointage(id){
   return S.timbr.find(x=>x.id===id)||(S.ouverte&&S.ouverte.id===id?S.ouverte:null)
     ||(S.va.d&&S.va.d.t.find(x=>x.id===id))||null;
+}
+// ---- Demandes de correction : chacun demande, le responsable decide (page Demandes) ----
+const libCorrType=t=>tr('corr_t_'+t);
+function resumeCorr(c){
+  const p=id=>id&&S.projById[id]?S.projById[id].codice:'—';
+  const av=c.prima?`${hm(c.prima.entrata)}→${c.prima.uscita?hm(c.prima.uscita):'…'} · ${p(c.prima.progetto_id)}`:'';
+  const ap=c.tipo==='eliminazione'?tr('corr_suppr_court'):`${hm(c.entrata)}→${c.uscita?hm(c.uscita):'…'} · ${p(c.progetto_id)}`;
+  return {av,ap};
+}
+function renderCorrJour(){
+  const box=$('#j-corr'); if(!box) return;
+  const L=S.corrJour||[];
+  if(!L.length){box.innerHTML='';return;}
+  box.innerHTML=`<div class="corrh">${escH(tr('corr_mes'))}</div>`+L.map(c=>{const {av,ap}=resumeCorr(c);
+    return `<div class="corri"><div class="l1"><b>${escH(libCorrType(c.tipo))}</b>${av?`<span class="mono">${escH(av)}</span><span class="ar">→</span>`:''}<span class="mono">${escH(ap)}</span></div>
+      <div class="l2">${escH(c.motivo)}${c.risposta?' · '+escH(tr('motif'))+' : '+escH(c.risposta):''}</div>
+      <div class="rt">${stChip(c.stato)}${c.stato==='richiesta'&&!window.VOIR_COMME?`<button class="icbtn" onclick="annulerCorrection('${c.id}')">${escH(tr('ab_annuler'))}</button>`:''}</div></div>`;}).join('');
+}
+function demanderCorrection(id){
+  const r=id?S.timbr.find(x=>x.id===id):null;
+  if(id&&!r) return;
+  const proj=S.projets.filter(p=>p.attivo||(r&&p.id===r.progetto_id)).sort((a,b)=>String(a.codice).localeCompare(String(b.codice)));
+  const pv=r?(r.progetto_id||''):(projActif(S.projCourant)?S.projCourant:'');
+  const opt=`${pv?'':`<option value="" disabled selected>${escH(tr('clk_proj_choisir'))}</option>`}${proj.map(p=>`<option value="${p.id}" ${p.id===pv?'selected':''}>${escH(p.codice)} — ${escH(p.nome)}</option>`).join('')}`;
+  const raisons=['corr_r1','corr_r2','corr_r3','corr_r4'].map(k=>`<button type="button" class="chip" data-r="${escH(tr(k))}">${escH(tr(k))}</button>`).join('');
+  ouvrirModal(`<h3>${escH(tr(r?'corr_titre':'corr_titre_new'))}</h3>
+    <div class="fhint" style="margin-bottom:10px">${escH(tr('corr_info'))}</div>
+    ${r?`<div class="pv">${escH(tr('corr_actuel'))} : <b class="mono">${hm(r.entrata)} → ${r.uscita?hm(r.uscita):'…'}</b>${r.progetto_id&&S.projById[r.progetto_id]?' · '+escH(S.projById[r.progetto_id].codice):''}</div>
+      <div class="seg" id="co-t" style="margin:10px 0"><button type="button" data-t="modifica" class="active">${escH(tr('corr_modif'))}</button><button type="button" data-t="eliminazione">${escH(tr('corr_suppr'))}</button></div>`:''}
+    <div id="co-champs">
+      ${r?'':`<div class="fld"><label for="co-j">${escH(tr('f_jour'))}</label><input type="date" id="co-j" value="${S.jour}" max="${aujourdhui()}"></div>`}
+      <div class="frow">
+        <div class="fld"><label for="co-e">${escH(tr('f_entree'))}</label><input type="time" id="co-e" value="${r?hm(r.entrata):''}"></div>
+        <div class="fld"><label for="co-u">${escH(tr('f_sortie'))}</label><input type="time" id="co-u" value="${r&&r.uscita?hm(r.uscita):''}"></div>
+      </div>
+      <div class="fld"><label for="co-p">${escH(tr('f_projet'))} *</label><select id="co-p">${opt}</select></div>
+    </div>
+    <div class="fld"><label for="co-m">${escH(tr('corr_motif'))} *</label><div class="chips" style="margin-bottom:6px">${raisons}</div><input type="text" id="co-m" maxlength="200"></div>
+    <div class="ferr hidden" id="co-err"></div>
+    <div class="mact"><span class="sp"></span><button class="btn ghost sm" onclick="fermerModal()">${escH(tr('cancel'))}</button><button class="btn sm" id="co-ok">${escH(tr('corr_envoyer'))}</button></div>`);
+  let tipo=r?'modifica':'aggiunta';
+  $$('#co-t button').forEach(b=>b.onclick=()=>{tipo=b.dataset.t;$$('#co-t button').forEach(x=>x.classList.toggle('active',x===b));$('#co-champs').classList.toggle('hidden',tipo==='eliminazione');});
+  $$('#modal-box .chips .chip[data-r]').forEach(b=>b.onclick=()=>{const m=$('#co-m');m.value=b.dataset.r+(m.value&&!m.value.startsWith(b.dataset.r)?' — '+m.value:'');m.focus();});
+  $('#co-ok').onclick=async()=>{
+    const err=m=>ferr('#co-err',m), motivo=$('#co-m').value.trim();
+    const row={tipo,motivo,giorno:r?r.giorno:($('#co-j')||{}).value};
+    if(r) row.timbratura_id=r.id;
+    if(tipo!=='eliminazione'){
+      row.entrata=$('#co-e').value; row.uscita=$('#co-u').value||null; row.progetto_id=$('#co-p').value||null;
+      if(!row.entrata) return err(tr('err_entree'));
+      if(!r&&!row.uscita) return err(tr('err_sortie'));
+      if(row.uscita&&row.uscita===row.entrata) return err(tr('err_same'));
+      if(!row.progetto_id) return err(tr('err_proj_requis'));
+      if(r&&row.entrata===hm(r.entrata)&&(row.uscita||'')===(r.uscita?hm(r.uscita):'')&&row.progetto_id===(r.progetto_id||'')) return err(tr('corr_rien_change'));
+    }
+    if(!row.giorno) return err(tr('err_entree'));
+    if(moisClos(row.giorno)) return err(tr('lock_clos'));
+    if(!motivo) return err(tr('e_motif'));
+    return avecBouton('#co-ok',async()=>{
+      const {error}=await sb.from('ore_correzioni').insert(row);
+      if(error) return err(msgErreur(error));
+      toast(tr('corr_ok')); fermerModal();
+      if(row.giorno!==S.jour) S.jour=row.giorno;
+      await rafraichirJour();
+    });
+  };
+}
+async function annulerCorrection(id){
+  if(!await confirmer(tr('ab_annuler_q'),'',tr('ab_annuler'),true)) return;
+  return unSeul('corr-'+id,async()=>{
+    const {error}=await sb.from('ore_correzioni').update({stato:'annullata'}).eq('id',id);
+    if(error){toast(msgErreur(error),'err');return;}
+    toast(tr('ok_annulee')); await rafraichirJour();
+  });
+}
+function ligneCorrection(c){
+  const {av,ap}=resumeCorr(c);
+  return `<div class="rq act"><span class="bar" style="background:var(--amber)"></span>
+    <div class="l1"><span>${escH(nomDe(c.user_id))}</span><span class="muted">·</span><span>${escH(libCorrType(c.tipo))}</span><span class="muted">·</span><span>${escH(fmtJJMMAAAA(c.giorno))}</span></div>
+    <div class="rt"></div>
+    <div class="l2">${av?`<span class="mono">${escH(av)}</span> → `:''}<b class="mono">${escH(ap)}</b> · ${escH(c.motivo)}</div>
+    <div class="ra"><button class="btn ok sm" onclick="deciderCorrection('${c.id}',true)">${escH(tr('ab_accepter'))}</button><button class="btn danger sm" onclick="refuserCorrection('${c.id}')">${escH(tr('ab_refuser'))}</button></div></div>`;
+}
+function deciderCorrection(id,ok,motif){
+  return unSeul('dc-'+id,async()=>{
+    const {error}=await sb.rpc('ore_correzione_decidi',{p_id:id,p_accetta:ok,p_risposta:motif||null});
+    if(error){toast(msgErreur(error),'err');return;}
+    toast(tr(ok?'corr_acc_ok':'corr_ref_ok')); await chargerDemandes();
+  });
+}
+function refuserCorrection(id){
+  const c=(S.corrPend||[]).find(x=>x.id===id); if(!c) return;
+  ouvrirModal(`<h3>${escH(tr('corr_refus_t'))}</h3><div class="pv">${escH(nomDe(c.user_id))} · ${escH(libCorrType(c.tipo))} · ${escH(fmtJJMMAAAA(c.giorno))}</div>
+    <div class="fld"><label for="cr-m">${escH(tr('f_motif'))} *</label><input type="text" id="cr-m" maxlength="200"></div><div class="ferr hidden" id="cr-err"></div>
+    <div class="mact"><span class="sp"></span><button class="btn ghost sm" onclick="fermerModal()">${escH(tr('cancel'))}</button><button class="btn danger sm" id="cr-ok">${escH(tr('ab_refuser'))}</button></div>`);
+  $('#cr-ok').onclick=async()=>{const m=$('#cr-m').value.trim();if(!m) return ferr('#cr-err',tr('e_motif'));fermerModal();await deciderCorrection(id,false,m);};
+  $('#cr-m').focus();
 }
 let EDIT_CTX=null;
 // Saisie et correction a la main : reservees aux responsables, managers, RH et admin (decision du 17/11/2026).
@@ -2712,7 +2843,7 @@ function renderBalance(){
 }
 function renderRepart(){
   // Operationnels : pas de repartition a la main, les heures vont au projet choisi au pointage (decision du 17/11/2026)
-  const solo=!peutSaisirMain();
+  const solo=true;   // la repartition se calcule a partir des pointages (17/11/2026) : plus de saisie ici
   $('.jgrid').classList.toggle('solo',solo); $('.j-rep').classList.toggle('hidden',solo);
   if(solo) return;
   renderBalance();
@@ -2771,7 +2902,9 @@ function tuileSolde(s){
 async function chargerBadge(){
   if(!gestionIci()){majBadge(0);return;}
   const {data,error}=await sb.from('ore_richieste').select('id').eq('stato','richiesta').neq('user_id',S.uid);
-  if(!error) majBadge((data||[]).length);
+  let n=error?0:(data||[]).length;
+  try{const c=await sb.from('ore_correzioni').select('id,user_id').eq('stato','richiesta');if(!c.error)n+=(c.data||[]).filter(x=>x.user_id!==S.uid||S.role==='ADMIN').length;}catch(e){}
+  if(!error) majBadge(n);
 }
 function majBadge(n){
   S.pendCount=n;
@@ -2784,17 +2917,41 @@ async function chargerAbsences(){
     S.abs.saldi=sal.data||[];
     let d0=addDays(aujourdhui(),-400);
     S.abs.saldi.forEach(s=>{if(s.data_riferimento<d0)d0=s.data_riferimento;});
-    const tasks=[fetchAll(()=>sb.from('ore_richieste').select('*').eq('user_id',S.uid).gte('al',d0).order('dal',{ascending:false}).order('id'))];
-    if(gestionIci()){
-      tasks.push(fetchAll(()=>sb.from('ore_richieste').select('*').eq('stato','richiesta').order('dal').order('id')));
-      tasks.push(fetchAll(()=>sb.from('ore_richieste').select('*').eq('stato','approvata').gte('al',aujourdhui()).lte('dal',addDays(aujourdhui(),30)).order('dal').order('id')));
-    }
-    const [mes,pend,eq]=await Promise.all(tasks);
-    S.abs.mes=mes; S.abs.pend=(pend||[]).filter(r=>r.user_id!==S.uid); S.abs.equipe=(eq||[]).filter(r=>r.user_id!==S.uid);
-    if(gestionIci()) majBadge(S.abs.pend.length);
+    S.abs.mes=await fetchAll(()=>sb.from('ore_richieste').select('*').eq('user_id',S.uid).gte('al',d0).order('dal',{ascending:false}).order('id'));
     errBox('#ab-err',null);
   }catch(e){errBox('#ab-err',e);}
   renderAbsences();
+}
+// Gestion d'equipe : demandes a decider et absences de l'equipe (responsables, managers, RH, admin ; sur ordinateur)
+async function chargerDemandes(){
+  try{
+    const [pend,eq]=await Promise.all([
+      fetchAll(()=>sb.from('ore_richieste').select('*').eq('stato','richiesta').order('dal').order('id')),
+      fetchAll(()=>sb.from('ore_richieste').select('*').eq('stato','approvata').gte('al',aujourdhui()).lte('dal',addDays(aujourdhui(),30)).order('dal').order('id'))]);
+    S.abs.pendTous=pend.filter(r=>r.user_id!==S.uid); S.abs.equipeTous=eq.filter(r=>r.user_id!==S.uid);
+    try{const c=await sb.from('ore_correzioni').select('*').eq('stato','richiesta').order('giorno').order('created_at');
+      S.corrTous=c.error?[]:(c.data||[]).filter(x=>x.user_id!==S.uid||S.role==='ADMIN');}catch(e){S.corrTous=[];}
+    majBadge(S.abs.pendTous.length+S.corrTous.length);
+    errBox('#de-err',null);
+  }catch(e){errBox('#de-err',e);}
+  renderDemandes();
+}
+function renderDemandes(){
+  const td=aujourdhui(), T=S.tipiById;
+  $('#de-site').innerHTML=selectSite('renderDemandes()');
+  S.abs.pend=(S.abs.pendTous||[]).filter(r=>dansFiltre(r.user_id)); S.abs.equipe=(S.abs.equipeTous||[]).filter(r=>dansFiltre(r.user_id));
+  S.corrPend=(S.corrTous||[]).filter(c=>dansFiltre(c.user_id));
+  const absAuj=new Set(S.abs.equipe.filter(r=>r.dal<=td&&r.al>=td&&(T[r.tipo_id]||{}).categoria!=='lavoro_agile').map(r=>r.user_id)).size;
+  const swAuj=new Set(S.abs.equipe.filter(r=>r.dal<=td&&r.al>=td&&(T[r.tipo_id]||{}).categoria==='lavoro_agile').map(r=>r.user_id)).size;
+  $('#de-tiles').innerHTML=kt(S.abs.pend.length?'amber':'green',String(S.abs.pend.length),tr('ab_atraiter'))+kt(S.corrPend.length?'amber':'green',String(S.corrPend.length),tr('corr_k'))+kt('navy',String(absAuj),tr('dem_abs_auj'))
+    +kt('',String(swAuj),tr('dem_sw_auj'))+kt('',String(S.abs.equipe.length),tr('dem_30j'));
+  const pend=`<div class="panel"><div class="phead"><h2>${escH(tr('ab_atraiter'))}</h2><span class="pill">${S.abs.pend.length}</span></div>`
+    +(S.abs.pend.length?S.abs.pend.map(r=>ligneDemande(r,'decision')).join(''):`<div class="empty-s">${escH(tr('ab_rien_atraiter'))}</div>`)+'</div>';
+  const eq=`<div class="panel"><h2>${escH(tr('ab_equipe'))}</h2>`
+    +(S.abs.equipe.length?S.abs.equipe.map(r=>ligneDemande(r,'equipe')).join(''):`<div class="empty-s">${escH(tr('ab_equipe_vide'))}</div>`)+'</div>';
+  const corr=`<div class="panel"><div class="phead"><h2>${escH(tr('corr_atraiter'))}</h2><span class="pill">${S.corrPend.length}</span></div>`
+    +(S.corrPend.length?S.corrPend.map(ligneCorrection).join(''):`<div class="empty-s">${escH(tr('corr_rien'))}</div>`)+'</div>';
+  $('#de-body').innerHTML=`<div class="abgrid2">${pend}${corr}</div>${eq}`;
 }
 // Autres personnes du meme site absentes sur la meme periode (aide a la decision)
 function autresAbsents(r){
@@ -2837,14 +2994,7 @@ function renderAbsences(){
       <div class="seg" id="ab-f"><button data-f="avenir" class="${f==='avenir'?'active':''}">${escH(tr('ab_avenir'))}</button><button data-f="toutes" class="${f==='toutes'?'active':''}">${escH(tr('ab_toutes'))}</button></div></div>`
     +(list.length?list.map(r=>ligneDemande(r,'mes')).join(''):`<div class="empty-s">${escH(tr(f==='toutes'?'ab_aucune':'ab_aucune_avenir'))}</div>`)+'</div>';
   let h;
-  if(gestionIci()){
-    // responsables sur ordinateur : a gauche ce qu'il faut decider et l'equipe, a droite ses propres soldes et demandes
-    const pend=`<div class="panel"><div class="phead"><h2>${escH(tr('ab_atraiter'))}</h2><span class="pill">${S.abs.pend.length}</span></div>`
-      +(S.abs.pend.length?S.abs.pend.map(r=>ligneDemande(r,'decision')).join(''):`<div class="empty-s">${escH(tr('ab_rien_atraiter'))}</div>`)+'</div>';
-    const eq=`<div class="panel"><h2>${escH(tr('ab_equipe'))}</h2>`
-      +(S.abs.equipe.length?S.abs.equipe.map(r=>ligneDemande(r,'equipe')).join(''):`<div class="empty-s">${escH(tr('ab_equipe_vide'))}</div>`)+'</div>';
-    h=`${soldesL}<div class="abgrid2">${pend}${mes}</div>${eq}`;
-  }else if(!S.tel){
+  if(!S.tel){
     h=`${soldesL}${mes}`;
   }else{
     h=`<div class="abgrid solo"><div>${soldes||mes}</div><div>${soldes?mes:''}</div></div>`;
@@ -2860,7 +3010,7 @@ function deciderDemande(id,stato,motivo){
     const {error}=await sb.from('ore_richieste').update(payload).eq('id',id);
     if(error){toast(msgErreur(error),'err');return false;}
     toast(tr(stato==='approvata'?'ok_accepte':'ok_refuse'));
-    await chargerAbsences();
+    await chargerDemandes();
     return true;
   });
 }
@@ -2948,7 +3098,7 @@ function ouvrirDemande(){
       if(error) return ferr('#dm-err',msgErreur(error));
       fermerModal();
       toast(tr(data&&data.stato==='approvata'?'ok_enreg':'ok_envoyee'));
-      if(S.view==='absences') await chargerAbsences(); else if(S.view==='jour') await rafraichirJour();
+      if(S.view==='absences') await chargerAbsences(); else if(S.view==='demandes') await chargerDemandes(); else if(S.view==='jour') await rafraichirJour();
     });
   };
 }
@@ -4015,7 +4165,7 @@ async function exportJournal(){
 }
 
 // ===== 10. NAVIGATION / DEMARRAGE =====
-const VUES_GEST=['valider','synthese','projets','cloture','params','journal'];
+const VUES_GEST=['demandes','valider','synthese','projets','cloture','params','journal'];
 // Telephone (ecran etroit et tactile) : l'outil sert a pointer. Validation, demandes a decider, parametres et
 // corrections de pointages se font sur ordinateur, pour tous les roles.
 const MQ_ETROIT=matchMedia('(max-width: 899px)');
@@ -4033,12 +4183,12 @@ function appliquerMode(){
   if(!S.uid) return;
   const avant=S.tel; appliquerMode(); if(avant===S.tel) return;
   chargerBadge();
-  if(!peutVoir(S.view)) allerA('jour'); else if(S.view==='absences') chargerAbsences(); else renderVueCourante();
+  if(!peutVoir(S.view)) allerA('jour'); else if(S.view==='absences') chargerAbsences(); else if(S.view==='demandes') chargerDemandes(); else renderVueCourante();
 });
 function peutVoir(v){
   if(['jour','absences','recap'].includes(v)) return true;
   if(S.tel) return false;
-  if(v==='valider'||v==='synthese') return S.isGest;
+  if(v==='demandes'||v==='valider'||v==='synthese') return S.isGest;
   if(v==='projets') return ['ADMIN','MANAGER'].includes(S.role);
   if(['cloture','params','journal'].includes(v)) return S.isRH;
   return false;
@@ -4053,14 +4203,14 @@ function allerA(view){
   majTitreTel();
   if(window.navPliMaj) navPliMaj();
   window.scrollTo(0,0);
-  ({jour:rafraichirJour,absences:chargerAbsences,recap:chargerRecap,valider:chargerValidation,synthese:chargerSynthese,
+  ({jour:rafraichirJour,absences:chargerAbsences,demandes:chargerDemandes,recap:chargerRecap,valider:chargerValidation,synthese:chargerSynthese,
     projets:rechargerProjets,cloture:chargerCloture,params:chargerParams,journal:chargerJournal})[view]();
 }
 // Telephone : nom de la page ouverte dans la barre du haut
 function majTitreTel(){const nb=$(`#nav button[data-view="${S.view}"] [data-i]`);$('#mtop-page').textContent=nb?nb.textContent:'';}
 function renderVueCourante(){
   if(!S.uid) return;
-  ({jour:renderJour,absences:renderAbsences,recap:renderRecap,valider:renderValidation,synthese:renderSynthese,
+  ({jour:renderJour,absences:renderAbsences,demandes:renderDemandes,recap:renderRecap,valider:renderValidation,synthese:renderSynthese,
     projets:renderProjets,cloture:renderCloture,params:renderParams,journal:()=>{renderFiltresJournal();renderJournal();}})[S.view]();
 }
 document.addEventListener('click',e=>{
