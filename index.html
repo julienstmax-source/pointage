@@ -940,6 +940,13 @@ try{ if(localStorage.getItem('ease_theme')==='dark') document.documentElement.se
      y compris quand on tire la page vers le bas ; avant, le fond clair de la page remontait sous l'heure et paraissait flou */
   html.tel{background-color:#0f1d30}
   html.tel body{min-height:100vh;min-height:100dvh}
+
+  /* bandeau « nouvelle version » */
+  .maj-bandeau{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:200;display:flex;align-items:center;gap:12px;
+    padding:10px 12px 10px 16px;border-radius:14px;background:var(--panel);border:1px solid var(--line);box-shadow:0 10px 30px rgba(15,30,55,.22);font-size:var(--fs-3);width:max-content;max-width:calc(100vw - 24px)}
+  .maj-bandeau .btn{white-space:nowrap;flex:none}
+  .maj-bandeau small{color:var(--muted)}
+  html.tel .maj-bandeau{bottom:calc(76px + env(safe-area-inset-bottom,0px))}
 </style>
 </head>
 <body>
@@ -1211,7 +1218,7 @@ document.querySelectorAll('script[type="text/plain"][data-global]').forEach(src=
     get(){ delete window[nom]; const x=document.createElement('script'); x.textContent=src.textContent; document.head.appendChild(x); return window[nom]; },
     set(v){ delete window[nom]; window[nom]=v; }});
 });
-const EASE_VERSION='17/11/2026 21:30';   // date d'assemblage, inscrite par assembler.py
+const EASE_VERSION='17/11/2026 17:24';   // date et heure reelles de fabrication du fichier (heure de Turin)
 const Ease=(()=>{
   const T=(fr,it,en)=>typeof L3==='function'?L3(fr,it,en):fr;
   const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -4342,6 +4349,27 @@ setInterval(()=>{
   }
 },1000);
 // Retour sur l'application (telephone deverrouille, onglet reactive) : on relit l'etat, qui a pu changer ailleurs.
+// ---- Mise a jour : une application posee sur l'ecran d'accueil (iPhone surtout) garde longtemps l'ancienne page en cache.
+// On relit la page publiee sans cache ; si sa version differe, on propose de recharger (adresse differente = cache contourne).
+let derniereVerifMaj=0;
+async function verifierMiseAJour(force){
+  if(!/^https?:/.test(location.protocol)) return;
+  if(!force&&Date.now()-derniereVerifMaj<5*60*1000) return;
+  derniereVerifMaj=Date.now();
+  try{
+    const r=await fetch(location.pathname+'?maj='+Date.now(),{cache:'no-store'});
+    if(!r.ok) return;
+    const m=(await r.text()).match(/const EASE_VERSION='([^']+)'/);
+    if(!m||m[1]===EASE_VERSION||document.getElementById('maj-bandeau')) return;
+    const b=document.createElement('div'); b.id='maj-bandeau'; b.className='maj-bandeau';
+    b.innerHTML=`<span>${escH(L3('Nouvelle version disponible','Nuova versione disponibile','New version available'))} <small>(${escH(m[1])})</small></span>`
+      +`<button type="button" class="btn sm">${escH(L3('Mettre à jour','Aggiorna','Update'))}</button>`;
+    b.querySelector('button').onclick=()=>location.replace(location.pathname+'?v='+encodeURIComponent(m[1]));
+    document.body.appendChild(b);
+  }catch(e){}
+}
+setTimeout(()=>verifierMiseAJour(true),4000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)verifierMiseAJour(false);});
 document.addEventListener('visibilitychange',()=>{
   if(document.visibilityState==='hidden'){flushRip();return;}
   if(S.uid&&S.view==='jour') rafraichirJour();
