@@ -655,6 +655,22 @@ try{ if(localStorage.getItem('ease_theme')==='dark') document.documentElement.se
     .cst .v small{font-size:13px;font-weight:600;color:#7d90a8;margin-left:3px}
     .cst .v.ok{color:#7fd6a8}.cst .v.pos{color:#F5B95F}
     .j-sem{display:flex}
+    .j-sem .phead{flex-wrap:wrap}
+    .j-sem .sh{display:flex;align-items:center;gap:10px}
+    .j-sem .sper{font-size:var(--fs-3);color:var(--muted);font-weight:600}
+    .sgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(280px,360px);gap:16px;align-items:start}
+    .sproj{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--soft);min-width:0}
+    .sproj-h{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:10px;font-size:var(--fs-3)}
+    .sproj-h span{font-size:var(--fs-2);color:var(--muted)}
+    .sproj .empty-s{background:var(--panel)}
+    .wk.mois{gap:6px}
+    .wkh{font-size:var(--fs-1);font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--muted);text-align:center;padding-bottom:2px}
+    .wkd.m{padding:6px 8px;gap:3px;border-radius:9px}
+    .wkd.m .hv{font-size:14px}
+    .wkd.m .dn{font-size:var(--fs-2)}
+    .wkd.m .dn i{display:none}
+    .wkd.m .tr{height:4px}
+    .wkd.m .ec{font-size:var(--fs-1);min-height:13px}
     .wk{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px}
     .wkd{all:unset;box-sizing:border-box;cursor:pointer;display:flex;flex-direction:column;gap:6px;padding:10px 12px;border:1px solid var(--line);
       border-radius:12px;background:var(--soft);min-width:0}
@@ -682,6 +698,8 @@ try{ if(localStorage.getItem('ease_theme')==='dark') document.documentElement.se
     .jgrid>.panel{min-height:230px}
     .clock{padding:16px 22px 12px}
     .jgrid{grid-template-areas:"clk clk" "pts rep" "sem sem"}
+    .jgrid.solo{grid-template-areas:"clk clk" "pts pts" "sem sem"}
+    .jgrid.solo>.panel.j-pts{min-height:0}
     .jgrid>.j-sem{grid-area:sem;min-height:0}
     .clk-body{display:grid;grid-template-columns:minmax(0,1fr) minmax(300px,520px);grid-template-areas:"main act" "stats stats";gap:12px 28px;align-items:center;margin-top:2px}
     .clk-main{grid-area:main}.clk-act{grid-area:act}.clk-stats{grid-area:stats}
@@ -827,6 +845,10 @@ try{ if(localStorage.getItem('ease_theme')==='dark') document.documentElement.se
   #v-jour:has(#clock:not(.hidden)) #j-info .dchip:not(.hol):not(.abs){display:none}
   /* telephone : pas d'export Excel (le fichier se lit mal sur un telephone) */
   html.tel #v-recap>.head{display:none}
+  /* heure d'arrivee bien visible quand on est en poste */
+  .clock .clk-sub .clk-arr{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700;color:var(--mint);margin-left:4px;letter-spacing:.3px;font-variant-numeric:tabular-nums}
+  .clock .clk-sub .clk-tot{display:block;margin-top:2px}
+  .clock .clk-proj select.need{border-color:var(--amber);box-shadow:0 0 0 3px var(--amber-bg)}
   /* « Ma semaine » : ordinateur seulement */
   .jgrid>.j-sem{display:none}
   @media(min-width:1101px){.jgrid>.j-sem{display:flex}}
@@ -841,6 +863,65 @@ try{ if(localStorage.getItem('ease_theme')==='dark') document.documentElement.se
     .clock .cst .v{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;white-space:nowrap}
     .clock .cst .v small{font-size:12px;margin-left:3px}
   }
+
+  /* ---- Boutons (17/11/2026) : action principale de la page bien visible ; exports en pastille avec l'icone du
+     format et une fleche vers le haut (convention des modules du portail : haut = exporter, bas = importer) ---- */
+  .head .btn:not(.ghost),.headact .btn:not(.ghost){height:40px;padding:0 18px;font-size:14px;border-radius:10px;letter-spacing:.1px;
+    background:linear-gradient(180deg,var(--blue-soft),var(--blue));box-shadow:0 3px 10px rgba(27,58,99,.25),inset 0 1px 0 rgba(255,255,255,.18)}
+  .head .btn:not(.ghost):hover,.headact .btn:not(.ghost):hover{filter:brightness(1.07);box-shadow:0 5px 14px rgba(27,58,99,.3),inset 0 1px 0 rgba(255,255,255,.18)}
+  .head .btn:not(.ghost):active,.headact .btn:not(.ghost):active{transform:translateY(1px)}
+  .head .btn:disabled{box-shadow:none}
+  html[data-theme="dark"] .head .btn:not(.ghost),html[data-theme="dark"] .headact .btn:not(.ghost){background:linear-gradient(180deg,#3d7cc0,#2c5f96);box-shadow:0 3px 10px rgba(0,0,0,.35)}
+  .head .btn.danger,.headact .btn.danger{background:var(--panel);color:var(--red);border:1px solid var(--red-line);box-shadow:none}
+  .btn-exp{all:unset;box-sizing:border-box;cursor:pointer;display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 14px 0 8px;
+    border-radius:999px;background:var(--panel);border:1px solid var(--line);color:var(--txt);font-size:13px;font-weight:700;font-family:inherit;
+    box-shadow:0 1px 3px rgba(15,30,55,.06);white-space:nowrap}
+  .btn-exp:hover{border-color:#1F7A4D;background:#F0F8F3}
+  html[data-theme="dark"] .btn-exp:hover{background:#16301f}
+  .btn-exp:focus-visible{outline:2px solid var(--blue-soft);outline-offset:2px}
+  .btn-exp .ix{width:24px;height:24px;flex:none}
+  .btn-exp .iu{width:16px;height:16px;flex:none;color:#1F7A4D;margin-left:2px}
+  html[data-theme="dark"] .btn-exp .iu{color:#5FBE8B}
+  /* heure de dernier depart, comme l'heure d'arrivee */
+  .clock .clk-dep{margin-top:4px}
+
+  /* Synthese projets : en-tete sur deux niveaux, separation entre totaux et projets */
+  .symat thead tr.g th{text-align:center;border-bottom:1px solid var(--line)}
+  .symat thead tr.g th:first-child{text-align:left;vertical-align:bottom}
+  .symat thead th.grp{color:var(--mint);background:var(--soft)}
+  .symat thead tr.s th{top:31px}
+  .symat .gp{border-left:2px solid var(--line)}
+  .symat th.pj{white-space:normal;vertical-align:bottom;min-width:96px;max-width:170px}
+  .symat .pjc{display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+  .symat .pjn{display:block;font-weight:500;text-transform:none;letter-spacing:0;font-size:var(--fs-1);color:var(--muted);margin-top:2px;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+  /* « Voir comme » */
+  .vc-btn{all:unset;box-sizing:border-box;cursor:pointer;display:flex;align-items:center;gap:8px;width:100%;margin-bottom:8px;padding:8px 12px;border-radius:10px;
+    border:1px dashed rgba(143,193,238,.45);color:var(--side-mint);font-size:var(--fs-3);font-weight:600}
+  .vc-btn:hover{background:rgba(143,193,238,.10)}
+  .vc-btn:focus-visible{outline:2px solid var(--side-mint);outline-offset:2px}
+  .vc-bandeau{position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:12px;margin:-12px 0 16px;padding:10px 14px;border-radius:12px;
+    background:var(--amber-bg);border:1px solid var(--amber-line);color:var(--txt);box-shadow:0 4px 14px rgba(150,101,15,.12)}
+  .vc-bandeau .ic{font-size:18px}
+  .vc-bandeau .tx{flex:1;min-width:0;font-size:var(--fs-3)}
+  .vc-bandeau .tx small{display:block;color:var(--muted);font-size:var(--fs-2)}
+  .vc-bandeau .btn.sm{height:32px}
+  .vc-list{display:flex;flex-direction:column;gap:4px;max-height:52vh;overflow:auto}
+  .vc-p{all:unset;box-sizing:border-box;cursor:pointer;display:flex;align-items:center;gap:10px;padding:7px 10px;border-radius:10px;border:1px solid transparent}
+  .vc-p:hover,.vc-p:focus-visible{background:var(--soft);border-color:var(--line)}
+  .vc-p.on{background:var(--bluesoft-bg);border-color:var(--bluesoft-line)}
+  .vc-p .av{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:var(--fs-2);font-weight:700;flex:none}
+  .vc-p .nm{display:flex;flex-direction:column;min-width:0}
+  .vc-p .nm small{color:var(--muted);font-size:var(--fs-2)}
+  html.tel .vc-bandeau{margin:8px 0 10px;flex-wrap:wrap}
+
+  /* tolerance d'ecart */
+  .tolc{height:38px;box-sizing:border-box;display:inline-flex;align-items:center;gap:5px;padding:0 14px;margin-left:8px}
+  .tolc b{color:var(--mint)}
+  .tolin{display:flex;align-items:center;gap:8px}
+  .tolin input{width:90px;text-align:center}
+  .tolin span{color:var(--muted);font-size:var(--fs-3)}
 </style>
 </head>
 <body>
@@ -857,16 +938,17 @@ try{ if(localStorage.getItem('ease_theme')==='dark') document.documentElement.se
         <button data-view="jour" class="active"><span class="dot"></span><span data-i="nav_jour">Journée</span></button>
         <button data-view="absences"><span class="dot"></span><span data-i="nav_abs">Absences</span><span class="nbadge hidden" data-badge="abs"></span></button>
         <button data-view="recap"><span class="dot"></span><span data-i="nav_recap">Récap</span></button>
-        <div class="nav-group-label nav-pliable gest hidden" data-groupe="gest" role="button" tabindex="0" aria-expanded="true"><span data-i="nav_sec_gest">Gestion</span><span class="nav-pli" aria-hidden="true">−</span></div>
+        <div class="nav-group-label nav-pliable gest hidden" data-groupe="gest" role="button" tabindex="0" aria-expanded="true"><span data-i="nav_sec_gest">Équipe et projets</span><span class="nav-pli" aria-hidden="true">−</span></div>
         <button data-view="valider" class="gest hidden"><span class="dot"></span><span data-i="nav_valider">Validation</span></button>
         <button data-view="synthese" class="gest hidden"><span class="dot"></span><span data-i="nav_synth">Synthèse projets</span></button>
         <button data-view="projets" class="proj hidden"><span class="dot"></span><span data-i="nav_projets">Projets</span></button>
-        <div class="nav-group-label nav-pliable rh hidden" data-groupe="rh" role="button" tabindex="0" aria-expanded="true"><span data-i="nav_sec_rh">Ressources humaines</span><span class="nav-pli" aria-hidden="true">−</span></div>
+        <div class="nav-group-label nav-pliable rh hidden" data-groupe="rh" role="button" tabindex="0" aria-expanded="true"><span data-i="nav_sec_rh">Administration</span><span class="nav-pli" aria-hidden="true">−</span></div>
         <button data-view="cloture" class="rh hidden"><span class="dot"></span><span data-i="nav_cloture">Clôture du mois</span></button>
         <button data-view="params" class="rh hidden"><span class="dot"></span><span data-i="nav_params">Paramètres</span></button>
         <button data-view="journal" class="rh hidden"><span class="dot"></span><span data-i="nav_journal">Journal</span></button>
       </nav>
       <div class="foot">
+        <button type="button" class="vc-btn hidden" id="vc-btn" onclick="choisirVoirComme()"><span aria-hidden="true">👁</span><span data-i="vc_btn">Voir comme…</span></button>
         <div class="userblock" role="button" tabindex="0" data-i-a="m_compte" onclick="Ease.menuUtilisateur.ouvrir()" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();Ease.menuUtilisateur.ouvrir()}">
           <div class="avatar" id="user-avatar">—</div>
           <div class="uinfo"><div class="uname" id="user-name">—</div><div class="urole" id="user-role">—</div></div>
@@ -882,6 +964,7 @@ try{ if(localStorage.getItem('ease_theme')==='dark') document.documentElement.se
     </header>
 
     <main class="main" id="main">
+      <div class="vc-bandeau hidden" id="vc-bandeau"></div>
       <!-- ================= JOURNEE ================= -->
       <section class="view" id="v-jour">
         <div class="head"><div><h1 data-i="nav_jour">Journée</h1><div class="sub" data-i="jour_sub"></div></div></div>
@@ -927,8 +1010,12 @@ try{ if(localStorage.getItem('ease_theme')==='dark') document.documentElement.se
               <div id="r-add" class="radd"></div>
             </div>
             <div class="panel j-sem" id="j-sem">
-              <div class="phead"><h2 data-i="h_sem">Ma semaine</h2><span class="pill" id="s-tot"></span></div>
-              <div class="wk" id="s-wk"></div>
+              <div class="phead"><div class="sh"><h2 data-i="h_recap_j">Récapitulatif</h2><span class="sper" id="s-per"></span></div>
+                <div class="sh"><span class="pill" id="s-tot"></span><div class="seg" id="s-seg"><button data-m="sem" class="active" data-i="seg_hebdo">Hebdomadaire</button><button data-m="mois" data-i="seg_mensuel">Mensuel</button></div></div></div>
+              <div class="sgrid">
+                <div><div class="wk" id="s-wk"></div></div>
+                <div class="sproj"><div class="sproj-h"><b data-i="h_projets">Par projet</b><span id="s-ptot"></span></div><div id="s-proj"></div></div>
+              </div>
             </div>
         </div>
       </section>
@@ -947,7 +1034,7 @@ try{ if(localStorage.getItem('ease_theme')==='dark') document.documentElement.se
       <section class="view hidden" id="v-recap">
         <div class="head">
           <div><h1 data-i="nav_recap">Récap</h1><div class="sub" data-i="recap_sub"></div></div>
-          <div class="headact"><button class="btn ghost sm" onclick="exportPerso()" data-i="export_btn">Exporter (Excel)</button></div>
+          <div class="headact"><button class="btn-exp" onclick="exportPerso()"><svg class="ix" viewBox="0 0 20 20" aria-hidden="true"><rect x="1.5" y="1.5" width="17" height="17" rx="4" fill="#1F7A4D"/><path d="M6.2 6l7.6 8M13.8 6l-7.6 8" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/></svg><span data-i="export_btn">Exporter (Excel)</span><svg class="iu" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 15V5M5.5 9.5L10 5l4.5 4.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
         </div>
         <div class="tbar">
           <div class="pernav">
@@ -989,7 +1076,7 @@ try{ if(localStorage.getItem('ease_theme')==='dark') document.documentElement.se
       <section class="view hidden" id="v-synthese">
         <div class="head">
           <div><h1 data-i="nav_synth">Synthèse projets</h1><div class="sub" data-i="eq_sub"></div></div>
-          <div class="headact"><button class="btn ghost sm" onclick="exportEquipe()" data-i="export_btn">Exporter (Excel)</button></div>
+          <div class="headact"><button class="btn-exp" onclick="exportEquipe()"><svg class="ix" viewBox="0 0 20 20" aria-hidden="true"><rect x="1.5" y="1.5" width="17" height="17" rx="4" fill="#1F7A4D"/><path d="M6.2 6l7.6 8M13.8 6l-7.6 8" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/></svg><span data-i="export_btn">Exporter (Excel)</span><svg class="iu" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 15V5M5.5 9.5L10 5l4.5 4.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
         </div>
         <div class="tbar">
           <div class="pernav">
@@ -1021,7 +1108,7 @@ try{ if(localStorage.getItem('ease_theme')==='dark') document.documentElement.se
       <section class="view hidden" id="v-cloture">
         <div class="head">
           <div><h1 data-i="nav_cloture">Clôture du mois</h1><div class="sub" data-i="cl_sub"></div></div>
-          <div class="headact"><button class="btn ghost sm" onclick="exportPaie()" data-i="cl_export">Export paie (Excel)</button><span id="cl-act"></span></div>
+          <div class="headact"><button class="btn-exp" onclick="exportPaie()"><svg class="ix" viewBox="0 0 20 20" aria-hidden="true"><rect x="1.5" y="1.5" width="17" height="17" rx="4" fill="#1F7A4D"/><path d="M6.2 6l7.6 8M13.8 6l-7.6 8" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/></svg><span data-i="cl_export">Export paie (Excel)</span><svg class="iu" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 15V5M5.5 9.5L10 5l4.5 4.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><span id="cl-act"></span></div>
         </div>
         <div class="tbar">
           <div class="pernav">
@@ -1053,7 +1140,7 @@ try{ if(localStorage.getItem('ease_theme')==='dark') document.documentElement.se
       <section class="view hidden" id="v-journal">
         <div class="head">
           <div><h1 data-i="nav_journal">Journal</h1><div class="sub" data-i="jo_sub"></div></div>
-          <div class="headact"><button class="btn ghost sm" onclick="exportJournal()" data-i="export_btn">Exporter (Excel)</button></div>
+          <div class="headact"><button class="btn-exp" onclick="exportJournal()"><svg class="ix" viewBox="0 0 20 20" aria-hidden="true"><rect x="1.5" y="1.5" width="17" height="17" rx="4" fill="#1F7A4D"/><path d="M6.2 6l7.6 8M13.8 6l-7.6 8" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/></svg><span data-i="export_btn">Exporter (Excel)</span><svg class="iu" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 15V5M5.5 9.5L10 5l4.5 4.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
         </div>
         <div class="tbar">
           <div class="pernav">
@@ -1072,7 +1159,7 @@ try{ if(localStorage.getItem('ease_theme')==='dark') document.documentElement.se
       <button data-view="jour" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.2 2"/></svg><span data-i="nav_jour">Journée</span></button>
       <button data-view="absences"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M8 3v4M16 3v4M3.5 10h17M9 15l2 2 4-4"/></svg><span data-i="nav_abs">Absences</span><span class="nbadge hidden" data-badge="abs"></span></button>
       <button data-view="recap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 20V11M12 20V5M19 20v-6"/></svg><span data-i="nav_recap">Récap</span></button>
-      <button id="tab-gest" class="gest hidden" onclick="menuGestion()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.2a6.2 6.2 0 0 1 3.5 5.8"/></svg><span data-i="nav_sec_gest">Gestion</span></button>
+      <button id="tab-gest" class="gest hidden" onclick="menuGestion()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.2a6.2 6.2 0 0 1 3.5 5.8"/></svg><span data-i="nav_sec_gest">Équipe et projets</span></button>
     </nav>
   </div>
 </div>
@@ -1093,7 +1180,7 @@ document.querySelectorAll('script[type="text/plain"][data-global]').forEach(src=
     get(){ delete window[nom]; const x=document.createElement('script'); x.textContent=src.textContent; document.head.appendChild(x); return window[nom]; },
     set(v){ delete window[nom]; window[nom]=v; }});
 });
-const EASE_VERSION='16/11/2026 15:30';   // date d'assemblage, inscrite par assembler.py
+const EASE_VERSION='17/11/2026 19:00';   // date d'assemblage, inscrite par assembler.py
 const Ease=(()=>{
   const T=(fr,it,en)=>typeof L3==='function'?L3(fr,it,en):fr;
   const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -1408,7 +1495,22 @@ if(typeof supabase==='undefined'){
     +'Vérifiez la connexion, ou ouvrez le fichier directement dans Chrome, Edge ou Safari.';
   throw new Error('supabase-js indisponible');
 }
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON, {auth:{persistSession:true,autoRefreshToken:true,storageKey:'ease-ore-auth'}});
+const sb = (()=>{
+  const c=supabase.createClient(SUPABASE_URL, SUPABASE_ANON, {auth:{persistSession:true,autoRefreshToken:true,storageKey:'ease-ore-auth'}});
+  // « Voir comme » (administrateur) : lecture seule. Les ecritures et les fonctions qui modifient sont bloquees ici,
+  // quelle que soit la page qui les demande. Lectures et preferences de l'admin restent permises.
+  const refus=()=>{const p=new Proxy(function(){},{get(_,k){
+    if(k==='then') return (res,rej)=>Promise.resolve({data:null,error:{message:tr('vc_refus',{n:window.VOIR_COMME}),code:'voir_comme'}}).then(res,rej);
+    return ()=>p;}});return p;};
+  const LIBRES=['ore_persone','ore_ruolo','ore_salva_preferenze'];
+  return new Proxy(c,{get(t,k){
+    if(k==='from') return tb=>{const b=t.from(tb);return new Proxy(b,{get(bt,bk){
+      if(window.VOIR_COMME&&['insert','update','upsert','delete'].includes(bk)) return ()=>refus();
+      const v=bt[bk];return typeof v==='function'?v.bind(bt):v;}});};
+    if(k==='rpc') return (n,a,o)=>window.VOIR_COMME&&!LIBRES.includes(n)?refus():t.rpc(n,a,o);
+    if(k==='functions'&&window.VOIR_COMME) return {invoke:()=>refus()};
+    const v=t[k];return typeof v==='function'?v.bind(t):v;}});
+})();
 const EASE_LOGO_WHITE="data:image/png;base64,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";
 function easeLogo(h){return `<img src="${EASE_LOGO_WHITE}" alt="EASE" style="height:${h}px;width:auto;display:block">`;}
 
@@ -1456,8 +1558,8 @@ const LOC={fr:'fr-FR',it:'it-IT',en:'en-GB'};
 const L3=(fr,it,en)=>lang==='fr'?fr:(lang==='en'?en:it);
 const I={
   fr:{loading:'Chargement…',brand:'Pointage',brand_sub:'Présences et heures',nav_sec_moi:'Mon temps',nav_prec:'Précédent',nav_suiv:'Suivant',m_compte:'Mon compte',e_reseau:'Pas de connexion au serveur. Vérifie le réseau puis réessaie : rien n’a été enregistré.',e_session:'Ta session a expiré. Reconnecte-toi.',f_aucun:'Personne ne correspond à ce filtre. Cliquer à nouveau sur la tuile pour tout afficher.',
-    nav_jour:'Journée',nav_abs:'Absences',nav_recap:'Récap',nav_sec_gest:'Gestion',nav_valider:'Validation',nav_synth:'Synthèse projets',
-    nav_projets:'Projets',nav_sec_rh:'Ressources humaines',nav_cloture:'Clôture du mois',nav_params:'Paramètres',nav_journal:'Journal',
+    nav_jour:'Journée',nav_abs:'Absences',nav_recap:'Récap',nav_sec_gest:'Équipe et projets',nav_valider:'Validation',nav_synth:'Synthèse projets',
+    nav_projets:'Projets',nav_sec_rh:'Administration',nav_cloture:'Clôture du mois',nav_params:'Paramètres',nav_journal:'Journal',
     signout:'Déconnexion',gate_err:'Erreur de chargement des accès : ',
     gate_denied:'Ton compte n’a pas (ou plus) accès à l’outil de pointage. Contacte la RH.',
     err_tables:'Les tables de l’outil n’existent pas encore dans Supabase : il faut d’abord exécuter ore_autonome.sql.',
@@ -1495,8 +1597,8 @@ const I={
     err_save:'Échec de l’enregistrement : ',warn_forgot:'Pointage ouvert depuis {n} h : indique l’heure réelle de départ.',
     err_dur:'Durée non reconnue. Exemples : 7h30, 7:30 ou 7,5.',err_dur_max:'Une journée ne dépasse pas 24 h.',ok_supprime:'Supprimé',
     seg_sem:'Semaine',seg_mois:'Mois',export_btn:'Exporter (Excel)',h_jours:'Par jour',h_projets:'Par projet',
-    k_absences:'Absences',k_theo_ecoule:'Théorique à ce jour',k_ecart:'Écart',k_nonrep:'Non réparti',
-    col_jour:'Jour',col_pointe:'Pointé',col_reparti:'Réparti',col_abs:'Absences',col_theo:'Théo.',col_ecart:'Écart',col_nonrep:'Projets',
+    k_absences:'Absences',k_theo_ecoule:'Théorique à ce jour',k_ecart:'Écart',k_nonrep:'Reste à répartir',
+    col_jour:'Jour',col_pointe:'Pointé',col_reparti:'Réparti',col_abs:'Absences',col_theo:'Théo.',col_ecart:'Écart',col_nonrep:'Reste à répartir',sy_grp_mois:'Heures du mois',sy_grp_proj:'Heures réparties par projet',sy_pointees:'Pointées',sy_reparties:'Réparties sur projets',
     col_nonrep_t:'Heures pointées pas encore réparties sur les projets',no_data:'Rien sur cette période.',total:'Total',
     va_validee_par:'Validée par {n} le {d}',va_attente:'Pas encore validée',va_avenir:'À venir',va_compte:'Semaines validées : {a} / {b}',mois_clos_court:'Mois clôturé',
     proj_sub:'Projets sur lesquels chacun peut affecter ses heures.',proj_new:'+ Nouveau projet',f_actifs:'Actifs',f_tous:'Tous',
@@ -1515,7 +1617,7 @@ const I={
     e_dem_figee:'Cette demande ne peut plus être modifiée.',e_chevauch:'Une demande existe déjà sur ces dates.',e_type:'Type d’absence inconnu ou désactivé.',
     e_periode:'Période trop longue (un an maximum).',e_introuvable:'Élément introuvable (déjà supprimé ?).',e_doublon:'Cet élément existe déjà.',
     e_fk:'Élément utilisé ailleurs : désactive-le plutôt que de le supprimer.',e_dates:'Dates invalides.',e_heures:'Heures invalides.',
-    abs_sub:'Congés, permis, maladie et télétravail.',jour_sub:'Pointage du jour, détail des pointages et répartition sur les projets.',recap_sub:'Vos heures de la semaine ou du mois : pointé, absences, écart et projets.',k_pj_actifs:'Projets actifs',k_pj_fermes:'Projets fermés',k_pj_clients:'Clients',pj_mois:'Réparti ce mois',pj_pers:'Personnes',k_pa_actifs:'Fiches actives',k_pa_resp:'Responsables, RH et admin',k_pa_inactifs:'Fiches désactivées',abs_new:'+ Nouvelle demande',abs_new_t:'Nouvelle demande',
+    abs_sub:'Congés, permis, maladie et télétravail.',jour_sub:'Pointage du jour, détail des pointages et répartition sur les projets.',h_recap_j:'Récapitulatif',tol_lib:'Tolérance',tol_val:'±{m} min/jour',tol_var:'selon le site',tol_titre:'Tolérance d’écart par jour',tol_info:'Un jour dont l’écart avec l’horaire théorique reste dans la tolérance s’affiche ✓. Les totaux de la semaine et du mois restent exacts.',tol_min_j:'min par jour',tol_err:'Entre 0 et 120 minutes.',vc_btn:'Voir comme…',vc_titre:'Voir l’outil comme…',vc_info:'Tu vois exactement ce que voit la personne choisie : menus, pages et données. Lecture seule : aucune modification n’est possible.',vc_cherche:'Rechercher une personne, un rôle, un site',vc_bandeau:'Tu vois l’outil comme {n}',vc_ro:'lecture seule',vc_changer:'Changer',vc_quitter:'Revenir à mon compte',vc_refus:'Lecture seule : tu vois l’outil comme {n}. Reviens à ton compte pour modifier.',clk_hors:'Hors poste',seg_hebdo:'Hebdomadaire',seg_mensuel:'Mensuel',rj_reparti:'{r} réparties sur {p} pointées',rj_nonrep:'{h} pointées pas encore réparties.',clk_proj_choisir:'— Choisir un projet —',err_proj_requis:'Choisis d’abord le projet sur lequel tu travailles.',err_proj_aucun:'Aucun projet ouvert : demande à ton responsable d’en créer un avant de pointer.',f_projet:'Projet',recap_sub:'Vos heures de la semaine ou du mois : pointé, absences, écart et projets.',k_pj_actifs:'Projets actifs',k_pj_fermes:'Projets fermés',k_pj_clients:'Clients',pj_mois:'Réparti ce mois',pj_pers:'Personnes',k_pa_actifs:'Fiches actives',k_pa_resp:'Responsables, RH et admin',k_pa_inactifs:'Fiches désactivées',abs_new:'+ Nouvelle demande',abs_new_t:'Nouvelle demande',
     ab_atraiter:'Demandes à traiter',ab_rien_atraiter:'Aucune demande en attente.',ab_soldes:'Mes soldes',ab_mes:'Mes demandes',ab_avenir:'À venir',
     ab_toutes:'Toutes',ab_aucune:'Aucune demande.',ab_aucune_avenir:'Rien de prévu.',ab_equipe:'Absences de l’équipe (30 prochains jours)',
     ab_equipe_vide:'Personne d’absent.',ab_accepter:'Accepter',ab_refuser:'Refuser',ab_refuser_t:'Refuser la demande',ab_annuler:'Annuler',
@@ -1585,8 +1687,8 @@ const I={
     tb_ore_timbrature:'Pointage',tb_ore_ripartizione:'Répartition',tb_ore_richieste:'Demande',tb_ore_validazioni:'Validation',tb_ore_chiusure:'Clôture',
     tb_ore_esiti_mese:'Décision RH',tb_ore_dipendenti:'Fiche personnel',tb_ore_saldi:'Solde',tb_ore_tipi_assenza:'Type d’absence',tb_ore_festivita:'Jour férié'},
   it:{loading:'Caricamento…',brand:'Timbrature',brand_sub:'Presenze e ore',nav_sec_moi:'Il mio tempo',nav_prec:'Precedente',nav_suiv:'Successivo',m_compte:'Il mio account',e_reseau:'Nessuna connessione al server. Controlla la rete e riprova: non è stato salvato nulla.',e_session:'La sessione è scaduta. Accedi di nuovo.',f_aucun:'Nessuno corrisponde a questo filtro. Clicca di nuovo sul riquadro per vedere tutti.',
-    nav_jour:'Giornata',nav_abs:'Assenze',nav_recap:'Riepilogo',nav_sec_gest:'Gestione',nav_valider:'Convalida',nav_synth:'Sintesi progetti',
-    nav_projets:'Progetti',nav_sec_rh:'Risorse umane',nav_cloture:'Chiusura del mese',nav_params:'Impostazioni',nav_journal:'Registro',
+    nav_jour:'Giornata',nav_abs:'Assenze',nav_recap:'Riepilogo',nav_sec_gest:'Team e progetti',nav_valider:'Convalida',nav_synth:'Sintesi progetti',
+    nav_projets:'Progetti',nav_sec_rh:'Amministrazione',nav_cloture:'Chiusura del mese',nav_params:'Impostazioni',nav_journal:'Registro',
     signout:'Disconnetti',gate_err:'Errore nel caricamento degli accessi: ',
     gate_denied:'Il tuo account non ha (o non ha più) accesso allo strumento di timbratura. Contatta le Risorse umane.',
     err_tables:'Le tabelle dello strumento non esistono ancora in Supabase: bisogna prima eseguire ore_autonome.sql.',
@@ -1624,8 +1726,8 @@ const I={
     err_save:'Salvataggio non riuscito: ',warn_forgot:'Timbratura aperta da {n} h: indica l’ora reale di uscita.',
     err_dur:'Durata non riconosciuta. Esempi: 7h30, 7:30 o 7,5.',err_dur_max:'Una giornata non supera le 24 h.',ok_supprime:'Eliminato',
     seg_sem:'Settimana',seg_mois:'Mese',export_btn:'Esporta (Excel)',h_jours:'Per giorno',h_projets:'Per progetto',
-    k_absences:'Assenze',k_theo_ecoule:'Teorico a oggi',k_ecart:'Scarto',k_nonrep:'Non ripartito',
-    col_jour:'Giorno',col_pointe:'Timbrato',col_reparti:'Ripartito',col_abs:'Assenze',col_theo:'Teor.',col_ecart:'Scarto',col_nonrep:'Progetti',
+    k_absences:'Assenze',k_theo_ecoule:'Teorico a oggi',k_ecart:'Scarto',k_nonrep:'Da ripartire',
+    col_jour:'Giorno',col_pointe:'Timbrato',col_reparti:'Ripartito',col_abs:'Assenze',col_theo:'Teor.',col_ecart:'Scarto',col_nonrep:'Da ripartire',sy_grp_mois:'Ore del mese',sy_grp_proj:'Ore ripartite per progetto',sy_pointees:'Timbrate',sy_reparties:'Ripartite sui progetti',
     col_nonrep_t:'Ore timbrate non ancora ripartite sui progetti',no_data:'Niente in questo periodo.',total:'Totale',
     va_validee_par:'Convalidata da {n} il {d}',va_attente:'Non ancora convalidata',va_avenir:'Da venire',va_compte:'Settimane convalidate: {a} / {b}',mois_clos_court:'Mese chiuso',
     proj_sub:'Progetti su cui ognuno può assegnare le proprie ore.',proj_new:'+ Nuovo progetto',f_actifs:'Attivi',f_tous:'Tutti',
@@ -1644,7 +1746,7 @@ const I={
     e_dem_figee:'Questa richiesta non può più essere modificata.',e_chevauch:'Esiste già una richiesta su queste date.',e_type:'Tipo di assenza sconosciuto o disattivato.',
     e_periode:'Periodo troppo lungo (massimo un anno).',e_introuvable:'Elemento non trovato (già eliminato?).',e_doublon:'Questo elemento esiste già.',
     e_fk:'Elemento usato altrove: disattivalo invece di eliminarlo.',e_dates:'Date non valide.',e_heures:'Orari non validi.',
-    abs_sub:'Ferie, permessi, malattia e lavoro agile.',jour_sub:'Timbratura del giorno, dettaglio delle timbrature e ripartizione sui progetti.',recap_sub:'Le tue ore della settimana o del mese: timbrato, assenze, scostamento e progetti.',k_pj_actifs:'Progetti attivi',k_pj_fermes:'Progetti chiusi',k_pj_clients:'Clienti',pj_mois:'Ripartito questo mese',pj_pers:'Persone',k_pa_actifs:'Schede attive',k_pa_resp:'Responsabili, RU e admin',k_pa_inactifs:'Schede disattivate',abs_new:'+ Nuova richiesta',abs_new_t:'Nuova richiesta',
+    abs_sub:'Ferie, permessi, malattia e lavoro agile.',jour_sub:'Timbratura del giorno, dettaglio delle timbrature e ripartizione sui progetti.',h_recap_j:'Riepilogo',tol_lib:'Tolleranza',tol_val:'±{m} min/giorno',tol_var:'secondo il sito',tol_titre:'Tolleranza di scostamento giornaliera',tol_info:'Un giorno il cui scostamento dall’orario teorico resta nella tolleranza appare ✓. I totali della settimana e del mese restano esatti.',tol_min_j:'min al giorno',tol_err:'Tra 0 e 120 minuti.',vc_btn:'Vedi come…',vc_titre:'Vedi lo strumento come…',vc_info:'Vedi esattamente ciò che vede la persona scelta: menu, pagine e dati. Sola lettura: nessuna modifica è possibile.',vc_cherche:'Cerca una persona, un ruolo, un sito',vc_bandeau:'Stai vedendo lo strumento come {n}',vc_ro:'sola lettura',vc_changer:'Cambia',vc_quitter:'Torna al mio account',vc_refus:'Sola lettura: stai vedendo lo strumento come {n}. Torna al tuo account per modificare.',clk_hors:'Fuori servizio',seg_hebdo:'Settimanale',seg_mensuel:'Mensile',rj_reparti:'{r} ripartite su {p} timbrate',rj_nonrep:'{h} timbrate non ancora ripartite.',clk_proj_choisir:'— Scegli un progetto —',err_proj_requis:'Scegli prima il progetto su cui lavori.',err_proj_aucun:'Nessun progetto aperto: chiedi al tuo responsabile di crearne uno prima di timbrare.',f_projet:'Progetto',recap_sub:'Le tue ore della settimana o del mese: timbrato, assenze, scostamento e progetti.',k_pj_actifs:'Progetti attivi',k_pj_fermes:'Progetti chiusi',k_pj_clients:'Clienti',pj_mois:'Ripartito questo mese',pj_pers:'Persone',k_pa_actifs:'Schede attive',k_pa_resp:'Responsabili, RU e admin',k_pa_inactifs:'Schede disattivate',abs_new:'+ Nuova richiesta',abs_new_t:'Nuova richiesta',
     ab_atraiter:'Richieste da gestire',ab_rien_atraiter:'Nessuna richiesta in attesa.',ab_soldes:'I miei saldi',ab_mes:'Le mie richieste',ab_avenir:'Prossime',
     ab_toutes:'Tutte',ab_aucune:'Nessuna richiesta.',ab_aucune_avenir:'Niente in programma.',ab_equipe:'Assenze del team (prossimi 30 giorni)',
     ab_equipe_vide:'Nessun assente.',ab_accepter:'Approva',ab_refuser:'Rifiuta',ab_refuser_t:'Rifiuta la richiesta',ab_annuler:'Annulla',
@@ -1714,8 +1816,8 @@ const I={
     tb_ore_timbrature:'Timbratura',tb_ore_ripartizione:'Ripartizione',tb_ore_richieste:'Richiesta',tb_ore_validazioni:'Convalida',tb_ore_chiusure:'Chiusura',
     tb_ore_esiti_mese:'Decisione RU',tb_ore_dipendenti:'Scheda personale',tb_ore_saldi:'Saldo',tb_ore_tipi_assenza:'Tipo di assenza',tb_ore_festivita:'Festività'},
   en:{loading:'Loading…',brand:'Timesheet',brand_sub:'Attendance and hours',nav_sec_moi:'My time',nav_prec:'Previous',nav_suiv:'Next',m_compte:'My account',e_reseau:'No connection to the server. Check the network and try again: nothing was saved.',e_session:'Your session has expired. Please sign in again.',f_aucun:'Nobody matches this filter. Click the tile again to show everyone.',
-    nav_jour:'Day',nav_abs:'Leave',nav_recap:'Summary',nav_sec_gest:'Management',nav_valider:'Approval',nav_synth:'Project summary',
-    nav_projets:'Projects',nav_sec_rh:'Human resources',nav_cloture:'Month close',nav_params:'Settings',nav_journal:'Audit log',
+    nav_jour:'Day',nav_abs:'Leave',nav_recap:'Summary',nav_sec_gest:'Team and projects',nav_valider:'Approval',nav_synth:'Project summary',
+    nav_projets:'Projects',nav_sec_rh:'Administration',nav_cloture:'Month close',nav_params:'Settings',nav_journal:'Audit log',
     signout:'Sign out',gate_err:'Error loading access rights: ',
     gate_denied:'Your account doesn’t have (or no longer has) access to the timesheet tool. Please contact HR.',
     err_tables:'The tool’s tables don’t exist in Supabase yet: run ore_autonome.sql first.',
@@ -1753,8 +1855,8 @@ const I={
     err_save:'Save failed: ',warn_forgot:'Entry open for {n} h: enter the actual clock-out time.',
     err_dur:'Duration not recognised. Examples: 7h30, 7:30 or 7.5.',err_dur_max:'A day cannot exceed 24 h.',ok_supprime:'Deleted',
     seg_sem:'Week',seg_mois:'Month',export_btn:'Export (Excel)',h_jours:'By day',h_projets:'By project',
-    k_absences:'Leave',k_theo_ecoule:'Scheduled to date',k_ecart:'Difference',k_nonrep:'Not allocated',
-    col_jour:'Day',col_pointe:'Clocked',col_reparti:'Allocated',col_abs:'Leave',col_theo:'Sched.',col_ecart:'Diff.',col_nonrep:'Projects',
+    k_absences:'Leave',k_theo_ecoule:'Scheduled to date',k_ecart:'Difference',k_nonrep:'Not yet allocated',
+    col_jour:'Day',col_pointe:'Clocked',col_reparti:'Allocated',col_abs:'Leave',col_theo:'Sched.',col_ecart:'Diff.',col_nonrep:'Not yet allocated',sy_grp_mois:'Hours this month',sy_grp_proj:'Hours allocated per project',sy_pointees:'Clocked',sy_reparties:'Allocated to projects',
     col_nonrep_t:'Clocked hours not yet allocated to projects',no_data:'Nothing in this period.',total:'Total',
     va_validee_par:'Approved by {n} on {d}',va_attente:'Not approved yet',va_avenir:'Upcoming',va_compte:'Weeks approved: {a} / {b}',mois_clos_court:'Month closed',
     proj_sub:'Projects everyone can allocate their hours to.',proj_new:'+ New project',f_actifs:'Active',f_tous:'All',
@@ -1773,7 +1875,7 @@ const I={
     e_dem_figee:'This request can no longer be changed.',e_chevauch:'A request already exists for these dates.',e_type:'Unknown or inactive leave type.',
     e_periode:'Period too long (one year maximum).',e_introuvable:'Item not found (already deleted?).',e_doublon:'This item already exists.',
     e_fk:'Item used elsewhere: deactivate it instead of deleting it.',e_dates:'Invalid dates.',e_heures:'Invalid times.',
-    abs_sub:'Annual leave, permits, sick leave and remote work.',jour_sub:'Today\'s clocking, punch details and split across projects.',recap_sub:'Your hours for the week or month: clocked, absences, gap and projects.',k_pj_actifs:'Active projects',k_pj_fermes:'Closed projects',k_pj_clients:'Clients',pj_mois:'Split this month',pj_pers:'People',k_pa_actifs:'Active records',k_pa_resp:'Managers, HR and admin',k_pa_inactifs:'Deactivated records',abs_new:'+ New request',abs_new_t:'New request',
+    abs_sub:'Annual leave, permits, sick leave and remote work.',jour_sub:'Today\'s clocking, punch details and split across projects.',h_recap_j:'Summary',tol_lib:'Tolerance',tol_val:'±{m} min/day',tol_var:'per site',tol_titre:'Daily gap tolerance',tol_info:'A day whose gap from the scheduled hours stays within the tolerance shows ✓. Weekly and monthly totals stay exact.',tol_min_j:'min per day',tol_err:'Between 0 and 120 minutes.',vc_btn:'View as…',vc_titre:'View the tool as…',vc_info:'You see exactly what the chosen person sees: menus, pages and data. Read-only: no change is possible.',vc_cherche:'Search a person, a role, a site',vc_bandeau:'You are viewing the tool as {n}',vc_ro:'read-only',vc_changer:'Change',vc_quitter:'Back to my account',vc_refus:'Read-only: you are viewing the tool as {n}. Go back to your account to make changes.',clk_hors:'Off duty',seg_hebdo:'Weekly',seg_mensuel:'Monthly',rj_reparti:'{r} split out of {p} clocked',rj_nonrep:'{h} clocked, not yet split.',clk_proj_choisir:'— Choose a project —',err_proj_requis:'First choose the project you are working on.',err_proj_aucun:'No open project: ask your manager to create one before clocking in.',f_projet:'Project',recap_sub:'Your hours for the week or month: clocked, absences, gap and projects.',k_pj_actifs:'Active projects',k_pj_fermes:'Closed projects',k_pj_clients:'Clients',pj_mois:'Split this month',pj_pers:'People',k_pa_actifs:'Active records',k_pa_resp:'Managers, HR and admin',k_pa_inactifs:'Deactivated records',abs_new:'+ New request',abs_new_t:'New request',
     ab_atraiter:'Requests to handle',ab_rien_atraiter:'No pending requests.',ab_soldes:'My balances',ab_mes:'My requests',ab_avenir:'Upcoming',
     ab_toutes:'All',ab_aucune:'No requests.',ab_aucune_avenir:'Nothing planned.',ab_equipe:'Team leave (next 30 days)',
     ab_equipe_vide:'Nobody away.',ab_accepter:'Approve',ab_refuser:'Refuse',ab_refuser_t:'Refuse the request',ab_annuler:'Cancel',
@@ -2119,6 +2221,10 @@ function confirmer(titre,texte,libOk,danger){
   });
 }
 const classeEcart=e=>Math.abs(e)<1?'ok':(e>0?'pos':'neg');
+// Tolerance d'ecart du site de la personne (minutes par jour, reglee par le responsable du site) :
+// un jour dans la tolerance s'affiche ✓ ; les totaux de la semaine et du mois restent exacts (decision du 17/11/2026).
+const tolDe=uid=>{const p=S.pers[uid]||{};const s=S.sitiById[p.sito_id]||{};return Math.max(0,+s.tolleranza_min||0);};
+const classeEcartJ=(e,uid)=>Math.abs(e)<1||Math.abs(e)<=tolDe(uid||S.uid)?'ok':(e>0?'pos':'neg');
 const chipType=(t,txt)=>`<span class="dchip abs"><span class="sw" style="background:${coulType(t)}"></span>${escH(txt||nomType(t))}</span>`;
 const stChip=st=>`<span class="st ${({approvata:'on',richiesta:'wait',rifiutata:'ref',annullata:'ann'})[st]||'off'}">${escH(tr('st_'+st))}</span>`;
 
@@ -2156,54 +2262,91 @@ function allerJour(d){
   if(S.view!=='jour') allerA('jour'); else rafraichirJour();
 }
 function jourDecaler(n){allerJour(addDays(S.jour,n));}
-// Semaine du jour affiche (bandeau « Ma semaine », ordinateur seulement)
+// Recapitulatif du bas de la Journee (ordinateur) : semaine ou mois du jour affiche, heures par jour et par projet.
+// On charge toujours au moins la semaine du jour (chiffre « Semaine » du bandeau), et le mois en mode mensuel.
+function periodeRecapJ(){
+  const l=lundiDe(S.jour), w2=addDays(l,6);
+  if(S.rjMode!=='mois') return {p1:l,p2:w2,c1:l,c2:w2};
+  const [m1,m2]=moisDe(S.jour);
+  return {p1:m1,p2:m2,c1:l<m1?l:m1,c2:w2>m2?w2:m2};
+}
 async function chargerSemaine(){
   if(S.tel) return;
-  const l=lundiDe(S.jour), d2=addDays(l,6), tok=S.uid+l+Date.now();
+  const P=periodeRecapJ(), tok=S.uid+P.c1+P.c2+Date.now();
   S.semTok=tok;
   try{
-    const [tt,aa]=await Promise.all([
-      sb.from('ore_timbrature').select('*').eq('user_id',S.uid).gte('giorno',l).lte('giorno',d2).order('giorno').order('entrata'),
-      sb.from('ore_richieste').select('*').eq('user_id',S.uid).eq('stato','approvata').lte('dal',d2).gte('al',l)
+    const [tt,aa,rr]=await Promise.all([
+      fetchAll(()=>sb.from('ore_timbrature').select('*').eq('user_id',S.uid).gte('giorno',P.c1).lte('giorno',P.c2).order('giorno').order('entrata').order('id')),
+      fetchAll(()=>sb.from('ore_richieste').select('*').eq('user_id',S.uid).eq('stato','approvata').lte('dal',P.c2).gte('al',P.c1).order('dal').order('id')),
+      fetchAll(()=>sb.from('ore_ripartizione').select('*').eq('user_id',S.uid).gte('giorno',P.c1).lte('giorno',P.c2).order('giorno').order('id'))
     ]);
-    for(const x of [tt,aa]) if(x.error) throw x.error;
     if(S.semTok!==tok) return;
-    S.sem={l,t:tt.data||[],a:aa.data||[]};
+    S.sem={c1:P.c1,c2:P.c2,mode:S.rjMode||'sem',t:tt,a:aa,r:rr};
   }catch(e){S.sem=null;}
   renderSemaine();renderStatsHorloge();
 }
-function totauxSemaine(){
-  if(!S.sem||S.sem.l!==lundiDe(S.jour)) return null;
-  const jours=joursEntre(S.sem.l,addDays(S.sem.l,6)), td=aujourdhui(), J=agregerJours(S.uid,jours,S.sem.t,[],S.sem.a);
-  if(J[S.jour]) J[S.jour].p=totalPointe(S.timbr);   // jour affiche : valeur a jour, pointage en cours compris
-  let P=0,A=0,T=0,Tt=0; jours.forEach(d=>{const x=J[d];P+=x.p;A+=x.a;Tt+=x.t;if(d<=td)T+=x.t;});
-  return {jours,J,P,A,T,Tt};
+// Totaux sur des jours deja charges ; le jour affiche prend les valeurs a jour (pointage en cours compris)
+function totauxJours(d1,d2){
+  if(!S.sem||d1<S.sem.c1||d2>S.sem.c2) return null;
+  const jours=joursEntre(d1,d2), td=aujourdhui(), J=agregerJours(S.uid,jours,S.sem.t,S.sem.r,S.sem.a);
+  if(J[S.jour]){J[S.jour].p=totalPointe(S.timbr);J[S.jour].r=S.rip.reduce((a,x)=>a+x.minuti,0);J[S.jour].e=J[S.jour].p+J[S.jour].a-J[S.jour].t;}
+  let P=0,A=0,T=0,Tt=0,R=0; jours.forEach(d=>{const x=J[d];P+=x.p;A+=x.a;R+=x.r;Tt+=x.t;if(d<=td)T+=x.t;});
+  return {jours,J,P,A,T,Tt,R};
+}
+function totauxSemaine(){const l=lundiDe(S.jour);return totauxJours(l,addDays(l,6));}
+function celluleJour(d,x,max,td,compact){
+  const we=!x.t&&!x.p&&!x.a, futur=d>td;
+  const ec=futur||d===td||(!x.t&&!x.p&&!x.a)?'':(classeEcartJ(x.e)==='ok'?'✓':fmtSigne(x.e));
+  const pc=m=>(m/max*100).toFixed(1)+'%';
+  const det=x.fer?escH(x.fer):(x.abs.length?escH(x.abs.map(a=>nomType(a.t)).join(', ')):(x.sw?escH(tr('tag_sw_court')):''));
+  const lib=compact?String(+d.slice(8)):escH(fmtIntl(d,{weekday:'short'}))+' '+(+d.slice(8));
+  return `<button type="button" class="wkd${compact?' m':''}${we?' we':''}${d===td?' cur':''}${d===S.jour?' sel':''}" onclick="allerJour('${d}')" title="${escH(cap(fmtIntl(d,{weekday:'long',day:'numeric',month:'long'})))}">
+    <span class="dn"><span>${lib}</span><i>${det}</i></span>
+    <span class="hv">${x.p||x.a?fmtDur(x.p+x.a):'—'}${x.t&&!compact?`<small>/ ${fmtDur(x.t)}</small>`:''}</span>
+    <span class="tr"><span class="a" style="width:${pc(x.p+x.a)}"></span><span class="p" style="width:${pc(x.p)}"></span></span>
+    <span class="ec ${ec?classeEcartJ(x.e):''}">${ec}</span></button>`;
 }
 function renderSemaine(){
   const box=$('#s-wk'); if(!box) return;
-  const W=totauxSemaine();
-  if(!W){box.innerHTML='';$('#s-tot').textContent='';return;}
+  const mode=S.rjMode||'sem';
+  $$('#s-seg button').forEach(b=>b.classList.toggle('active',b.dataset.m===mode));
+  const P=periodeRecapJ(), W=totauxJours(P.p1,P.p2);
+  $('#s-per').textContent=mode==='mois'?cap(fmtIntl(P.p1,{month:'long',year:'numeric'})):tr('week_of',{n:isoWeek(P.p1)});
+  if(!W){box.innerHTML='';$('#s-tot').textContent='';$('#s-proj').innerHTML='';$('#s-ptot').textContent='';return;}
   const td=aujourdhui(), max=Math.max(60,...W.jours.map(d=>Math.max(W.J[d].t,W.J[d].p+W.J[d].a)));
   $('#s-tot').textContent=fmtDur(W.P+W.A)+(W.Tt?' / '+fmtDur(W.Tt):'');
-  box.innerHTML=W.jours.map(d=>{
-    const x=W.J[d], we=!x.t&&!x.p&&!x.a, futur=d>td;
-    const ec=futur||d===td||(!x.t&&!x.p&&!x.a)?'':(classeEcart(x.e)==='ok'?'✓':fmtSigne(x.e));
-    const pc=m=>(m/max*100).toFixed(1)+'%';
-    const det=x.fer?escH(x.fer):(x.abs.length?escH(x.abs.map(a=>nomType(a.t)).join(', ')):(x.sw?escH(tr('tag_sw_court')):''));
-    return `<button type="button" class="wkd${we?' we':''}${d===td?' cur':''}${d===S.jour?' sel':''}" onclick="allerJour('${d}')">
-      <span class="dn"><span>${escH(fmtIntl(d,{weekday:'short'}))} ${+d.slice(8)}</span><i>${det}</i></span>
-      <span class="hv">${x.p||x.a?fmtDur(x.p+x.a):'—'}${x.t?`<small>/ ${fmtDur(x.t)}</small>`:''}</span>
-      <span class="tr"><span class="a" style="width:${pc(x.p+x.a)}"></span><span class="p" style="width:${pc(x.p)}"></span></span>
-      <span class="ec ${ec?classeEcart(x.e):''}">${ec}</span></button>`;
-  }).join('');
+  if(mode==='mois'){
+    const vides=(parseIso(P.p1).getDay()+6)%7;
+    const tete=[0,1,2,3,4,5,6].map(i=>`<span class="wkh">${escH(fmtIntl(addDays(lundiDe(P.p1),i),{weekday:'short'}))}</span>`).join('');
+    box.className='wk mois';
+    box.innerHTML=tete+'<span class="wkv"></span>'.repeat(vides)+W.jours.map(d=>celluleJour(d,W.J[d],max,td,true)).join('');
+  }else{
+    box.className='wk';
+    box.innerHTML=W.jours.map(d=>celluleJour(d,W.J[d],max,td,false)).join('');
+  }
+  // par projet, sur la periode (le jour affiche avec sa repartition en cours)
+  const parP={};
+  S.sem.r.forEach(r=>{if(r.giorno<P.p1||r.giorno>P.p2||r.giorno===S.jour)return;parP[r.progetto_id]=(parP[r.progetto_id]||0)+r.minuti;});
+  if(S.jour>=P.p1&&S.jour<=P.p2) S.rip.forEach(r=>{parP[r.progetto_id]=(parP[r.progetto_id]||0)+r.minuti;});
+  const lst=Object.entries(parP).filter(([,m])=>m>0).sort((a,b)=>b[1]-a[1]), R=lst.reduce((a,[,m])=>a+m,0);
+  $('#s-ptot').textContent=tr('rj_reparti',{r:fmtDur(R),p:fmtDur(W.P)});
+  $('#s-proj').innerHTML=lst.length?'<div class="pbars">'+lst.map(([pid,m])=>{
+    const p=S.projById[pid]||{codice:'?',nome:''}, pct=R?Math.round(m/R*100):0;
+    return `<div class="pbar"><div class="nm"><span class="sw" style="background:${coulProj(p)}"></span><b>${escH(p.codice)}</b><span>${escH(p.nome)}</span></div>
+      <div class="vv">${fmtDur(m)}<small>${pct} %</small></div><div class="track"><span style="width:${pct}%;background:${coulProj(p)}"></span></div></div>`;
+  }).join('')+'</div>'+(W.P>R?`<div class="fhint" style="margin-top:10px">${escH(tr('rj_nonrep',{h:fmtDur(W.P-R)}))}</div>`:'')
+    :`<div class="empty-s">${escH(tr('no_data'))}</div>`;
 }
+document.addEventListener('click',e=>{const b=e.target.closest('#s-seg button[data-m]');if(!b||b.dataset.m===(S.rjMode||'sem'))return;
+  S.rjMode=b.dataset.m;try{localStorage.setItem('ease_ore_rj',S.rjMode);}catch(x){}renderSemaine();chargerSemaine();});
+try{const m=localStorage.getItem('ease_ore_rj');if(m==='mois')S.rjMode='mois';}catch(e){}
 // Chiffres du bandeau de pointage (ordinateur) : theorique du jour, reste a faire, semaine
 function renderStatsHorloge(){
   const box=$('#clk-stats'); if(!box) return;
   const fer=ferieDe(S.jour,S.uid), th=theoMin(S.uid,S.jour,fer), tot=totalPointe(S.timbr), W=totauxSemaine();
   const st=(l,v,c)=>`<div class="cst"><span class="l">${escH(l)}</span><span class="v ${c||''}">${v}</span></div>`;
   let reste='—',cl='';
-  if(th>0){if(tot<th) reste=fmtDur(th-tot); else {reste='✓ '+escH(tr('k_atteint'))+(tot>th?`<small>${fmtSigne(tot-th)}</small>`:'');cl=tot>th?'pos':'ok';}}
+  if(th>0){if(th-tot>tolDe(S.uid)) reste=fmtDur(th-tot); else {reste='✓ '+escH(tr('k_atteint'))+(tot>th?`<small>${fmtSigne(tot-th)}</small>`:'');cl=tot>th?'pos':'ok';}}
   box.innerHTML=st(tr('theo_jour'),fer?escH(fer):fmtDur(th))+st(tr('k_reste_faire'),reste,cl)
     +st(tr('k_sem'),W?fmtDur(W.P+W.A)+(W.Tt?`<small>/ ${fmtDur(W.Tt)}</small>`:''):'—');
 }
@@ -2242,7 +2385,7 @@ function renderJour(){
   if(lock==='clos'){lk.innerHTML='🔒 '+escH(tr('lock_clos'));lk.classList.remove('hidden');}
   else if(lock==='valide'){lk.innerHTML='🔒 '+escH(tr('lock_valide',{n:nomDe(S.jourVal.validata_da),d:fmtQuand(S.jourVal.validata_il).slice(0,10)}));lk.classList.remove('hidden');}
   else lk.classList.add('hidden');
-  $('#j-add').classList.toggle('hidden',!!lock||S.tel);
+  $('#j-add').classList.toggle('hidden',!!lock||S.tel||!peutSaisirMain());
   renderHorloge();
   renderPointages();
   renderRepart();
@@ -2271,8 +2414,10 @@ function renderProjHorloge(){
   const liste=rec.length&&autres.length
     ?`<optgroup label="${escH(tr('r_recent'))}">${rec.map(opt).join('')}</optgroup><optgroup label="${escH(tr('clk_proj_tous'))}">${autres.map(opt).join('')}</optgroup>`
     :rec.concat(autres).map(opt).join('');
+  // pas de pointage sans projet : avant l'arrivee on choisit, en poste on ne peut plus revenir a « sans projet »
+  const vide=S.ouverte?(cur?'':`<option value="">${escH(tr('clk_proj_aucun'))}</option>`):`<option value="" disabled ${cur?'':'selected'}>${escH(tr('clk_proj_choisir'))}</option>`;
   box.innerHTML=`<label for="clk-psel">${escH(tr('clk_proj'))}</label>${pc?`<span class="sw" style="background:${(coulProj(pc))}"></span>`:''}
-    <select id="clk-psel" onchange="changerProjet(this.value)"><option value="">${escH(tr('clk_proj_aucun'))}</option>${liste}${pc&&!pc.attivo?opt(pc):''}</select>`;
+    <select id="clk-psel" class="${!S.ouverte&&!cur?'need':''}" onchange="changerProjet(this.value)">${vide}${liste}${pc&&!pc.attivo?opt(pc):''}</select>`;
   box.classList.remove('hidden');
 }
 async function changerProjet(pid){
@@ -2305,14 +2450,17 @@ function renderHorloge(){
   if(o){
     $('#clk-state').innerHTML=`<span class="clk-live"><i></i>${escH(tr(o.modalita==='lavoro_agile'?'clk_on_sw':'clk_on'))}</span>`;
     $('#clk-time').textContent=fmtHMS(secDepuis(o.giorno,o.entrata));
-    const since=o.giorno!==aujourdhui()?tr('clk_since_day',{d:fmtJJMM(o.giorno),h:hm(o.entrata)}):tr('clk_since',{h:hm(o.entrata)});
-    $('#clk-sub').textContent=since+(o.giorno===S.jour?', '+tr('lbl_tot_jour')+' '+fmtDur(tot):'');
+    const since=o.giorno!==aujourdhui()?tr('clk_since_day',{d:fmtJJMM(o.giorno),h:'§'}):tr('clk_since',{h:'§'});
+    $('#clk-sub').innerHTML=escH(since).replace('§',`<b class="clk-arr">${escH(hm(o.entrata))}</b>`)
+      +(o.giorno===S.jour?`<span class="clk-tot">${escH(tr('lbl_tot_jour'))} ${escH(fmtDur(tot))}</span>`:'');
     btn.className='clk-btn out';btn.innerHTML=ICO_OUT+escH(tr('btn_out'));
   }else{
     const dern=S.timbr.length?S.timbr[S.timbr.length-1]:null;
-    $('#clk-state').textContent=dern&&dern.uscita?tr('clk_off_after',{h:hm(dern.uscita)}):tr('clk_none');
+    const apres=dern&&dern.uscita;
+    $('#clk-state').textContent=apres?tr('clk_hors'):tr('clk_none');
     $('#clk-time').textContent=fmtDur(tot);
-    $('#clk-sub').textContent=S.jour===aujourdhui()?tr('clk_tot'):tr('clk_tot_day');
+    $('#clk-sub').innerHTML=escH(S.jour===aujourdhui()?tr('clk_tot'):tr('clk_tot_day'))
+      +(apres?`<span class="clk-tot clk-dep">${escH(tr('clk_off_after',{h:'§'})).replace('§',`<b class="clk-arr">${escH(hm(dern.uscita))}</b>`)}</span>`:'');
     btn.className='clk-btn in';btn.innerHTML=ICO_IN+escH(tr('btn_in'));
   }
   renderDayline();
@@ -2366,16 +2514,22 @@ function renderPointages(){
   const rows=S.timbr, tot=totalPointe(rows);
   $('#j-tot').textContent=fmtDur(tot);
   // Sur telephone, les pointages se lisent ; les corrections se font sur ordinateur (sortie oubliee : bouton de pointage)
-  const aide=S.tel?`<div class="fhint" style="margin-top:8px">${escH(tr('j_corr_pc'))}</div>`:'';
+  const aide='';
   if(!rows.length){$('#j-list').innerHTML=`<div class="empty-s">${escH(tr('empty_punch'))}</div>`+aide;return;}
   const ov=chevauchements(rows);
-  $('#j-list').innerHTML=rows.map(r=>lignePointage(r,ov,S.tel?null:`ouvrirEditeur('${r.id}')`)).join('')+aide;
+  $('#j-list').innerHTML=rows.map(r=>lignePointage(r,ov,S.tel||!peutSaisirMain()?null:`ouvrirEditeur('${r.id}')`)).join('')+aide;
 }
 
 // ---- Pointage par le bouton : l'heure est celle du serveur (fonction ore_timbra) ----
 let pointageEnCours=false;
 async function pointer(){
   if(pointageEnCours) return;
+  if(!S.ouverte&&!projChoisi()){   // arrivee : le projet est obligatoire
+    const actifs=S.projets.filter(p=>p.attivo).length;
+    toast(tr(actifs?'err_proj_requis':'err_proj_aucun'),'err');
+    const sel=$('#clk-psel'); if(sel){sel.classList.add('need');sel.focus();}
+    return;
+  }
   pointageEnCours=true;$('#clk-btn').disabled=true;
   try{
     await flushRip();
@@ -2405,6 +2559,9 @@ function trouverPointage(id){
     ||(S.va.d&&S.va.d.t.find(x=>x.id===id))||null;
 }
 let EDIT_CTX=null;
+// Saisie et correction a la main : reservees aux responsables, managers, RH et admin (decision du 17/11/2026).
+// Un operationnel ne renseigne que l'heure de sortie oubliee.
+const peutSaisirMain=()=>!!S.role&&S.role!=='OPERATIVO';
 function ouvrirEditeur(id,opts){
   opts=opts||{};
   const r=id?trouverPointage(id):null;
@@ -2412,9 +2569,12 @@ function ouvrirEditeur(id,opts){
   const jour=r?r.giorno:(opts.jour||S.jour);
   const lock=autre?(moisClos(jour)?'clos':null):(r&&r.giorno!==S.jour?(moisClos(r.giorno)?'clos':null):verrouJour());
   EDIT_CTX={id,cible,autre,apres:opts.apres||null,oubli:!!opts.oubli};
-  const fige=S.tel&&!!opts.oubli&&!autre;   // telephone : seule l'heure de sortie oubliee se renseigne
+  const fige=(S.tel||!peutSaisirMain())&&!!opts.oubli&&!autre;   // telephone ou operationnel : seule l'heure de sortie oubliee se renseigne
+  if(!opts.oubli&&!peutSaisirMain()) return;
   const dern=!autre&&S.timbr.length?S.timbr[S.timbr.length-1]:null;
-  const v={giorno:jour,entrata:r?hm(r.entrata):(dern&&dern.uscita?hm(dern.uscita):'08:00'),uscita:r?hm(r.uscita):'',nota:r?(r.nota||''):''};
+  const v={giorno:jour,entrata:r?hm(r.entrata):(dern&&dern.uscita?hm(dern.uscita):'08:00'),uscita:r?hm(r.uscita):'',nota:r?(r.nota||''):'',
+    progetto:r?(r.progetto_id||''):(projActif(S.projCourant)?S.projCourant:'')};
+  const pAct=S.projets.filter(p=>p.attivo||p.id===v.progetto).sort((a,b)=>String(a.codice).localeCompare(String(b.codice)));
   const ro=!!lock;
   const dis=ro?'disabled':'';
   ouvrirModal(`<h3>${escH(tr(r?'ed_edit':'ed_new'))}${autre?' — '+escH(nomDe(cible)):''}</h3>
@@ -2426,6 +2586,7 @@ function ouvrirEditeur(id,opts){
       <div class="fld"><label for="ed-u">${escH(tr('f_sortie'))}</label><input type="time" id="ed-u" value="${v.uscita}" ${dis}></div>
     </div>
     <div class="fhint info" id="ed-info"></div>
+    ${fige?'':`<div class="fld"><label for="ed-p">${escH(tr('f_projet'))} *</label><select id="ed-p" ${dis}>${v.progetto?'':`<option value="" disabled selected>${escH(tr('clk_proj_choisir'))}</option>`}${pAct.map(p=>`<option value="${p.id}" ${p.id===v.progetto?'selected':''}>${escH(p.codice)} — ${escH(p.nome)}</option>`).join('')}</select></div>`}
     ${ro?'':`<div class="fhint">${escH(tr(opts.oubli?'f_sortie_oubli':'f_sortie_vide'))}</div>`}
     <div class="fld"><label for="ed-n">${escH(tr('f_note'))}</label><input type="text" id="ed-n" maxlength="200" value="${escH(v.nota)}" ${dis}></div>
     ${autre&&!ro?`<div class="fld"><label for="ed-m">${escH(tr('f_motif'))} *</label><input type="text" id="ed-m" maxlength="200" placeholder="${escH(tr('f_motif_ph'))}"></div>`:''}
@@ -2453,7 +2614,10 @@ async function sauverPointage(){
   if(u&&u===e) return err(tr('err_same'));
   if(u&&duree(e,u)>20*60) return err(tr('err_long'));
   if(autre&&!motivo) return err(tr('e_motif'));
+  const selP=$('#ed-p'), pid=selP?selP.value:null;
+  if(selP&&!pid) return err(tr('err_proj_requis'));
   const payload={giorno:g,entrata:e,uscita:u||null,nota:n||null};
+  if(selP) payload.progetto_id=pid;
   if(autre) payload.motivo=motivo;
   return avecBouton('#ed-save',async()=>{
     const {error}=id
@@ -2487,7 +2651,7 @@ async function supprimerPointage(id){
 const ripPend={}, ripTimers={};
 let ripChain=Promise.resolve();
 function ripSet(pid,min){
-  if(verrouJour()) return;
+  if(verrouJour()||!peutSaisirMain()) return;
   min=Math.max(0,Math.min(1440,Math.round(min)));
   const r=S.rip.find(x=>x.progetto_id===pid);
   if(min===0) S.rip=S.rip.filter(x=>x.progetto_id!==pid);
@@ -2547,6 +2711,10 @@ function renderBalance(){
   bar.firstElementChild.style.width=(pointe>0?Math.min(100,rep/pointe*100):0)+'%';
 }
 function renderRepart(){
+  // Operationnels : pas de repartition a la main, les heures vont au projet choisi au pointage (decision du 17/11/2026)
+  const solo=!peutSaisirMain();
+  $('.jgrid').classList.toggle('solo',solo); $('.j-rep').classList.toggle('hidden',solo);
+  if(solo) return;
   renderBalance();
   const foc=document.activeElement&&document.activeElement.closest('#r-list')?document.activeElement.dataset.k:null;
   const lock=!!verrouJour(), dis=lock?'disabled':'';
@@ -2869,7 +3037,7 @@ function renderRecap(){
     :`<span class="tag ${lundis.every(l=>vmap[l]||l>td)?'ok':''}">${escH(tr('va_compte',{a:lundis.filter(l=>vmap[l]).length,b:lundis.filter(l=>l<=td).length}))}</span>`)+clos;
   let lignes='', semPrec=null;
   jours.forEach(d=>{
-    const x=J[d], we=x.t===0&&!x.p&&!x.a, vide=!x.p&&!x.a, c=d>td?'':classeEcart(x.e);
+    const x=J[d], we=x.t===0&&!x.p&&!x.a, vide=!x.p&&!x.a, c=d>td?'':classeEcartJ(x.e);
     if(S.recap.mode==='mois'&&lundiDe(d)!==semPrec){
       semPrec=lundiDe(d);
       lignes+=`<tr class="sep"><td colspan="6" class="small muted" style="background:var(--soft);font-weight:700">${escH(tr('week_of',{n:isoWeek(d)}))} ${vInfo(semPrec)}</td></tr>`;
@@ -2903,7 +3071,7 @@ function labelsVal(){
 }
 async function chargerValidation(){
   const d1=S.va.lun, d2=addDays(d1,6), tok=d1;
-  S.va.tok=tok; labelsVal(); $('#va-site').innerHTML=selectSite('renderValidation()');
+  S.va.tok=tok; labelsVal(); $('#va-site').innerHTML=selectSite('renderValidation()')+boutonTol();
   try{
     const [tt,rr,aa,vv]=await Promise.all([
       fetchAll(()=>sb.from('ore_timbrature').select('*').gte('giorno',d1).lte('giorno',d2).order('giorno').order('entrata').order('id')),
@@ -2938,7 +3106,7 @@ const AN_LIB=a=>tr('an_'+a);
 function filtrerVal(f){S.va.filtre=S.va.filtre===f?'':f;renderValidation();}
 function renderValidation(){
   const d=S.va.d; if(!d) return;
-  labelsVal(); $('#va-site').innerHTML=selectSite('renderValidation()');
+  labelsVal(); $('#va-site').innerHTML=selectSite('renderValidation()')+boutonTol();
   const td=aujourdhui(), jours=joursEntre(d.d1,d.d2), clos=moisClos(d.d1)||moisClos(d.d2), futur=d.d1>td;
   const rows=personnesGerees(true).map(p=>({p,an:analyseSemaine(p.user_id),v:d.v[p.user_id]}));
   const soi=uid=>uid===S.uid&&!S.isAdmin;
@@ -3083,13 +3251,16 @@ function renderSynthese(){
   if(!uids.length){$('#eq-mat').innerHTML=`<div class="empty-s" style="padding:10px 12px">${escH(tr('no_data'))}</div>`;}
   else{
     const tot={}; pids.forEach(pid=>{tot[pid]=0;uids.forEach(id=>{tot[pid]+=U[id].par[pid]||0;});});
-    $('#eq-mat').innerHTML=`<table class="t"><thead><tr><th>${escH(tr('col_pers'))}</th><th class="num">${escH(tr('col_pointe'))}</th><th class="num">${escH(tr('col_reparti'))}</th><th class="num">${escH(tr('col_nonrep'))}</th>`
-      +pids.map(pid=>{const p=S.projById[pid]||{codice:'?',nome:''};return `<th class="num" title="${escH(p.nome)}"><span class="sw" style="background:${coulProj(p)};margin-right:5px"></span>${escH(p.codice)}</th>`;}).join('')
+    // deux niveaux d'en-tete : les totaux du mois, puis une colonne par projet (code et nom)
+    $('#eq-mat').innerHTML=`<table class="t symat"><thead><tr class="g"><th rowspan="2">${escH(tr('col_pers'))}</th><th colspan="3" class="grp">${escH(tr('sy_grp_mois'))}</th>`
+      +(pids.length?`<th colspan="${pids.length}" class="grp gp">${escH(tr('sy_grp_proj'))}</th>`:'')+`</tr><tr class="s">`
+      +`<th class="num">${escH(tr('sy_pointees'))}</th><th class="num">${escH(tr('sy_reparties'))}</th><th class="num">${escH(tr('col_nonrep'))}</th>`
+      +pids.map((pid,i)=>{const p=S.projById[pid]||{codice:'?',nome:''};return `<th class="num pj${i?'':' gp'}" title="${escH(p.nome)}"><span class="pjc"><span class="sw" style="background:${coulProj(p)}"></span>${escH(p.codice)}</span><span class="pjn">${escH(p.nome)}</span></th>`;}).join('')
       +'</tr></thead><tbody>'
       +uids.map(id=>{const x=U[id],nr=x.p-x.r;return `<tr><td>${escH(nomDe(id))}</td><td class="num">${fmtDur(x.p)}</td><td class="num">${fmtDur(x.r)}</td><td class="num ${Math.abs(nr)<1?'ok':(nr>0?'pos':'neg')}">${Math.abs(nr)<1?'✓':fmtDur(nr)}</td>`
-        +pids.map(pid=>`<td class="num">${x.par[pid]?fmtDur(x.par[pid]):''}</td>`).join('')+'</tr>';}).join('')
+        +pids.map((pid,i)=>`<td class="num${i?'':' gp'}">${x.par[pid]?fmtDur(x.par[pid]):''}</td>`).join('')+'</tr>';}).join('')
       +`</tbody><tfoot><tr><td>${escH(tr('total'))}</td><td class="num">${fmtDur(P)}</td><td class="num">${fmtDur(R)}</td><td class="num">${fmtDur(P-R)}</td>`
-      +pids.map(pid=>`<td class="num">${fmtDur(tot[pid])}</td>`).join('')+'</tr></tfoot></table>';
+      +pids.map((pid,i)=>`<td class="num${i?'':' gp'}">${fmtDur(tot[pid])}</td>`).join('')+'</tr></tfoot></table>';
   }
   const op=S.syn.open.filter(r=>dansFiltre(r.user_id));
   $('#eq-open').innerHTML=op.length?op.map(r=>{
@@ -3285,7 +3456,7 @@ async function rouvrirMois(){
 function chargerXLSX(){
   if(window.XLSX) return Promise.resolve();
   return new Promise((res,rej)=>{const s=document.createElement('script');
-    s.src='https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';s.onload=res;s.onerror=()=>rej(new Error('SheetJS'));document.head.appendChild(s);});
+    s.src='https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js';   /* SheetJS + mise en forme des cellules */s.onload=res;s.onerror=()=>rej(new Error('SheetJS'));document.head.appendChild(s);});
 }
 const dateXL=s=>parseIso(s); // vraie date Excel, affichee JJ/MM/AAAA
 function feuille(aoa,largeurs){
@@ -3308,16 +3479,120 @@ function lignesGiorno(uid,jours,J,avecNom){
     x.abs.map(a=>a.t&&a.t.codice).join(' '),x.a?enHeures(x.a):'',x.fer||'',enHeures(x.e)]);});
 }
 const ENTETE_GIORNO=['Giorno','Ore teoriche','Ore lavorate','Modalità','Assenza','Ore assenza','Festivo','Scarto'];
+// Export du Recap : feuille de presence mensuelle au format du modele Word (CCNL, une ligne par jour, signatures),
+// pour la personne connectee et le mois affiche (en mode semaine : le mois du jour de reference).
+// Remplies : ore ordinarie et assenze. Turnisti, straordinario, mensa et buono pasto restent a remplir a la main.
+// Un jour ouvre passe sans pointage ni absence accordee = « Assenza non giustificata » (heures = horaire theorique).
 async function exportPerso(){
   if(S.tel) return;
   if(!S.recap.d) return;
   try{await chargerXLSX();}catch(e){toast(tr('exp_err')+e.message,'err');return;}
-  const [d1,d2]=S.recap.d, wb=XLSX.utils.book_new(), jours=joursEntre(d1,d2);
-  const J=agregerJours(S.uid,jours,S.recap.t,S.recap.r,S.recap.a);
-  XLSX.utils.book_append_sheet(wb,feuille([ENTETE_GIORNO].concat(lignesGiorno(S.uid,jours,J,false)),[12,12,12,12,12,11,22,8]),'Giornaliero');
-  XLSX.utils.book_append_sheet(wb,feuille(lignesRip(S.recap.r,false),[12,12,32,18,22,8]),'Ripartizione');
-  XLSX.utils.book_append_sheet(wb,feuille(lignesTimbr(S.recap.t,false),[12,9,9,8,11,13,30,30]),'Timbrature');
-  XLSX.writeFile(wb,`Ore_${nomFichier(S.nom)}_${d1}_${d2}.xlsx`);
+  const [m1,m2]=moisDe(S.recap.mode==='mois'?S.recap.d[0]:S.recap.ref);
+  let tt,aa,vv,rr;
+  try{
+    [tt,aa,vv,rr]=await Promise.all([
+      fetchAll(()=>sb.from('ore_timbrature').select('*').eq('user_id',S.uid).gte('giorno',m1).lte('giorno',m2).order('giorno').order('entrata').order('id')),
+      fetchAll(()=>sb.from('ore_richieste').select('*').eq('user_id',S.uid).eq('stato','approvata').lte('dal',m2).gte('al',m1).order('dal').order('id')),
+      fetchAll(()=>sb.from('ore_validazioni').select('*').eq('user_id',S.uid).gte('lunedi',lundiDe(m1)).lte('lunedi',m2).order('lunedi')),
+      fetchAll(()=>sb.from('ore_ripartizione').select('*').eq('user_id',S.uid).gte('giorno',m1).lte('giorno',m2).order('giorno').order('id'))
+    ]);
+  }catch(e){toast(tr('exp_err')+msgErreur(e),'err');return;}
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,foglioPresenze(S.uid,m1,m2,tt,aa,vv),'Foglio presenze');
+  XLSX.utils.book_append_sheet(wb,feuille(lignesRip(rr,false),[12,12,32,18,22,8]),'Ripartizione');
+  XLSX.utils.book_append_sheet(wb,feuille(lignesTimbr(tt,false),[12,9,9,8,11,13,30,30]),'Timbrature');
+  XLSX.writeFile(wb,`Presenze_${nomFichier(S.nom)}_${m1.slice(0,7)}.xlsx`);
+}
+function foglioPresenze(uid,m1,m2,tt,aa,vv){
+  const P=S.pers[uid]||{}, td=aujourdhui(), jours=joursEntre(m1,m2);
+  const J=agregerJours(uid,jours,tt,[],aa);
+  const GG=['Domenica','Lunedi','Martedi','Mercoledi','Giovedi','Venerdi','Sabato'];
+  const MM=['GEN','FEB','MAR','APR','MAG','GIU','LUG','AGO','SET','OTT','NOV','DIC'];
+  const h=min=>Math.round(min/60*100)/100;
+  const NAVY='1B3A63',BLEU='2F6FB0',PALE='E9F1FA',LIGNE='C9D6E5',GRIS='F3F5F8',TXT='1E293B',MUET='5D6B80';
+  const bord={top:{style:'thin',color:{rgb:LIGNE}},bottom:{style:'thin',color:{rgb:LIGNE}},left:{style:'thin',color:{rgb:LIGNE}},right:{style:'thin',color:{rgb:LIGNE}}};
+  const st=(o)=>Object.assign({font:{name:'Calibri',sz:10,color:{rgb:TXT}},alignment:{vertical:'center',wrapText:true},border:bord},o||{});
+  const ws={}, merges=[], hauteurs=[];
+  let r=0;
+  const put=(c,v,s,t)=>{ws[XLSX.utils.encode_cell({r,c})]={v:v==null?'':v,t:t||(typeof v==='number'?'n':'s'),s};};
+  const fus=(c1,c2,r2)=>{if(c2>c1||(r2&&r2>r))merges.push({s:{r,c:c1},e:{r:r2||r,c:c2}});};
+  const ligne=(cells,ht)=>{cells.forEach(([c1,c2,v,s])=>{for(let c=c1;c<=c2;c++)put(c,c===c1?v:'',s);fus(c1,c2);});hauteurs[r]=ht||18;r++;};
+  const titre=st({font:{name:'Calibri',sz:10,bold:true,color:{rgb:NAVY}},fill:{fgColor:{rgb:PALE}}});
+  const val=st({font:{name:'Calibri',sz:11,bold:true,color:{rgb:TXT}}});
+  // --- en-tete (memes lignes que le modele)
+  const ease=st({font:{name:'Calibri',sz:20,bold:true,color:{rgb:'FFFFFF'}},fill:{fgColor:{rgb:NAVY}},alignment:{horizontal:'center',vertical:'center'}});
+  for(let c=0;c<=3;c++){put(c,c?'':'EASE',ease);}
+  ws[XLSX.utils.encode_cell({r:r+1,c:0})]={v:'',t:'s',s:ease};for(let c=1;c<=3;c++)ws[XLSX.utils.encode_cell({r:r+1,c})]={v:'',t:'s',s:ease};
+  merges.push({s:{r,c:0},e:{r:r+1,c:3}});
+  for(let c=4;c<=8;c++)put(c,c===4?'CCNL DI RIFERIMENTO: Metalmeccanico':'',titre);fus(4,8);hauteurs[r]=20;r++;
+  [[4,4,'ANNO: '+m1.slice(0,4)],[5,6,'MESE: '+MM[+m1.slice(5,7)-1]],[7,8,'FILIALE: '+(P.sito_id?nomSite(P.sito_id):'')]].forEach(([c1,c2,v])=>{for(let c=c1;c<=c2;c++)put(c,c===c1?v:'',titre);fus(c1,c2);});
+  hauteurs[r]=20;r++;
+  ligne([[0,3,'RAGIONE SOCIALE AZIENDA:',titre],[4,8,'EASE',val]],19);
+  ligne([[0,3,'COGNOME E NOME DIPENDENTE:',titre],[4,8,(P.nome||S.nom||'')+(P.matricola?'   ·   Matricola '+P.matricola:''),val]],19);
+  const sett=(P.orario_min||[]).reduce((a,b)=>a+b,0);
+  ligne([[0,4,'',st({border:{}})],[5,7,'ORE SETTIMANALI:',st({font:{name:'Calibri',sz:10,bold:true,color:{rgb:NAVY}},fill:{fgColor:{rgb:PALE}},alignment:{horizontal:'right',vertical:'center'}})],[8,8,h(sett),st({font:{name:'Calibri',sz:11,bold:true,color:{rgb:TXT}},alignment:{horizontal:'center',vertical:'center'}})]],20);
+  // --- en-tete des colonnes
+  const th=st({font:{name:'Calibri',sz:9,bold:true,color:{rgb:'FFFFFF'}},fill:{fgColor:{rgb:BLEU}},alignment:{horizontal:'center',vertical:'center',wrapText:true}});
+  ['DATA','GIORNO SETTIMANA (L-M-M-G-V-S-D)','ORE ORDINARIE','SOLO PER I TURNISTI (*)','STRAORDINARIO','TRATTENUTA MENSA (SI/NO)','BUONO PASTO (SI/NO)','ASSENZA (ORE)','TIPO DI ASSENZA']
+    .forEach((v,c)=>put(c,v,th));hauteurs[r]=36;r++;
+  // --- une ligne par jour
+  let totO=0,totA=0;
+  const debutRiga=r;
+  jours.forEach((d,k)=>{
+    const x=J[d], dow=parseIso(d).getDay(), we=dow===0||dow===6, avant=P.data_inizio&&d<P.data_inizio, futur=d>td, auj=d===td;
+    let ord='',ass='',tipo='';
+    if(!avant&&!futur){
+      if(x.fer){ if(x.p) ord=h(x.p); tipo='Festività'; }
+      else if(x.t>0){
+        if(x.p) ord=h(Math.min(x.p,x.t));
+        let am=x.a; const noms=x.abs.map(a=>a.t?(a.t.nome_it||a.t.codice):'').filter(Boolean);
+        if(!x.p&&!auj&&x.t-x.a>0){am=x.t;noms.push('Assenza non giustificata');}   // aujourd'hui : la journee n'est pas finie
+        if(am){ass=h(am);tipo=[...new Set(noms)].join(', ');}
+      }else if(x.p) ord=h(x.p);
+      if(ord===''&&!auj&&(x.t>0||(x.fer&&!we))) ord=0;
+    }
+    if(typeof ord==='number')totO+=ord; if(typeof ass==='number')totA+=ass;
+    const fond=we?GRIS:(x.fer?'FCF3E3':(k%2?'FAFBFD':'FFFFFF'));
+    const base=st({fill:{fgColor:{rgb:fond}},font:{name:'Calibri',sz:9,color:{rgb:we?MUET:TXT}},alignment:{horizontal:'center',vertical:'center'}});
+    const gauche=st({fill:{fgColor:{rgb:fond}},font:{name:'Calibri',sz:9,color:{rgb:we?MUET:TXT},bold:!we},alignment:{horizontal:'left',vertical:'center',indent:1}});
+    const rouge=tipo.includes('non giustificata')?'9C3B2C':(tipo.startsWith('Festività')?'96650F':'1F6B44');
+    const tp=st({fill:{fgColor:{rgb:fond}},font:{name:'Calibri',sz:9,bold:!!tipo,color:{rgb:rouge}},alignment:{horizontal:'left',vertical:'center',indent:1,wrapText:true}});
+    put(0,+d.slice(8),st({fill:{fgColor:{rgb:fond}},font:{name:'Calibri',sz:9,bold:true,color:{rgb:we?MUET:NAVY}},alignment:{horizontal:'center',vertical:'center'}}));
+    put(1,GG[dow],gauche);
+    put(2,ord,st({fill:{fgColor:{rgb:fond}},font:{name:'Calibri',sz:10,bold:true,color:{rgb:TXT}},alignment:{horizontal:'center',vertical:'center'}}));
+    [3,4,5,6].forEach(c=>put(c,'',base));
+    put(7,ass,st({fill:{fgColor:{rgb:fond}},font:{name:'Calibri',sz:9,bold:true,color:{rgb:rouge}},alignment:{horizontal:'center',vertical:'center'}}));
+    put(8,tipo,tp);
+    hauteurs[r]=tipo.length>17?22:13.5;r++;
+  });
+  // total (ajout par rapport au modele)
+  const tot=st({font:{name:'Calibri',sz:10,bold:true,color:{rgb:NAVY}},fill:{fgColor:{rgb:PALE}},alignment:{horizontal:'center',vertical:'center'}});
+  put(0,'TOTALE',st({font:{name:'Calibri',sz:10,bold:true,color:{rgb:NAVY}},fill:{fgColor:{rgb:PALE}},alignment:{horizontal:'left',vertical:'center',indent:1}}));put(1,'',tot);fus(0,1);
+  put(2,Math.round(totO*100)/100,tot);[3,4,5,6].forEach(c=>put(c,'',tot));put(7,Math.round(totA*100)/100,tot);put(8,'',tot);hauteurs[r]=20;r++;
+  // --- signatures hebdomadaires (avec la validation faite dans l'outil)
+  ligne([[0,8,'',st({border:{}})]],3);
+  ligne([[0,8,'FIRME SETTIMANALI A CURA DEL RESPONSABILE DELL’AZIENDA',st({font:{name:'Calibri',sz:9,bold:true,color:{rgb:'FFFFFF'}},fill:{fgColor:{rgb:NAVY}},alignment:{horizontal:'center',vertical:'center'}})]],17);
+  const lundis=[...new Set(jours.map(lundiDe))], vmap=Object.fromEntries(vv.map(v=>[v.lunedi,v]));
+  const cols=[[0,1],[2,2],[3,4],[5,5],[6,7],[8,8]];
+  const sem=st({font:{name:'Calibri',sz:9,bold:true,color:{rgb:NAVY}},fill:{fgColor:{rgb:PALE}},alignment:{horizontal:'center',vertical:'center'}});
+  cols.forEach(([c1,c2],i)=>{for(let c=c1;c<=c2;c++)put(c,c===c1?(c2>c1||c1===8?(i+1)+'° SETTIMANA':(i+1)+'° SETT.'):'',sem);fus(c1,c2);});hauteurs[r]=18;r++;
+  const sig=st({font:{name:'Calibri',sz:8,italic:true,color:{rgb:'1F6B44'}},alignment:{horizontal:'center',vertical:'bottom',wrapText:true}});
+  cols.forEach(([c1,c2],i)=>{const l=lundis[i], v=l&&vmap[l];
+    const nm=v?nomDe(v.validata_da).split(' '):[];
+    for(let c=c1;c<=c2;c++)put(c,c===c1&&v?'✓ '+(nm.length>1?nm[0][0]+'. '+nm.slice(1).join(' '):nm[0])+' · '+fmtQuand(v.validata_il).slice(0,5):'',sig);fus(c1,c2);});
+  hauteurs[r]=30;r++;
+  ligne([[0,8,'* Specificare l\'orario del turno solo qualora non segua lo standard A (6 - 14), B (14 - 22), C (22 - 6)',st({font:{name:'Calibri',sz:8,bold:true,color:{rgb:MUET}},border:{}})]],14);
+  ligne([[0,8,'AVVERTENZE\n1) Trasmettere via fax al n. 011-8159211 ogni fine settimana ed ultimo giorno del mese.\n2) Utilizzare un nuovo foglio a partire dal 1° giorno del mese successivo.\n3) Compilare in ogni sua parte con particolare attenzione alle ore ordinarie, straordinarie ed assenze.\n4) Per chiarimenti contattare il numero telefonico 011-8137911 oppure l’indirizzo email torino.finance@randstad.it',
+    st({font:{name:'Calibri',sz:8,color:{rgb:TXT}},fill:{fgColor:{rgb:GRIS}},alignment:{vertical:'top',wrapText:true}})]],50);
+  ligne([[0,8,'ATTENZIONE: IL FOGLIO PRESENZE NON E\' VALIDO SENZA FIRMA DEL LAVORATORE E TIMBRO E FIRMA DELL\'AZIENDA.',st({font:{name:'Calibri',sz:9,bold:true,color:{rgb:'9C3B2C'}},fill:{fgColor:{rgb:'FBEAE7'}},alignment:{horizontal:'center',vertical:'center',wrapText:true}})]],17);
+  ligne([[0,4,'Firma del lavoratore:',titre],[5,8,'Timbro e firma dell’azienda',titre]],16);
+  ligne([[0,4,'',st()],[5,8,'',st()]],32);
+  ws['!ref']=XLSX.utils.encode_range({s:{r:0,c:0},e:{r:r-1,c:8}});
+  ws['!merges']=merges;
+  ws['!cols']=[{wch:5},{wch:11},{wch:8},{wch:9},{wch:9},{wch:9},{wch:8},{wch:8},{wch:17}];   // tient sur une page A4 en largeur
+  ws['!rows']=Array.from({length:r},(_,i)=>({hpt:hauteurs[i]||18}));
+  ws['!margins']={left:0.35,right:0.35,top:0.3,bottom:0.3,header:0.1,footer:0.1};
+  return ws;
 }
 async function exportEquipe(){
   if(!S.syn.d) return;
@@ -3601,9 +3876,42 @@ async function supprimerFerie(id){
   if(error){toast(msgErreur(error),'err');return;}
   await chargerParams();
 }
+// ---- Tolerance d'ecart par site : le responsable de site regle la sienne ; manager, RH et admin tous les sites ----
+function sitesTolGerables(){
+  if(['ADMIN','HR','MANAGER'].includes(S.role)) return S.siti.filter(s=>s.attivo!==false);
+  if(S.role==='RESP_SITO'){const sid=(S.pers[S.uid]||{}).sito_id;return S.siti.filter(s=>s.id===sid);}
+  return [];
+}
+function boutonTol(){
+  const L=sitesTolGerables(); if(!L.length) return '';
+  const cible=S.siteFiltre?L.filter(s=>s.id===S.siteFiltre):L;
+  const vals=[...new Set(cible.map(s=>+s.tolleranza_min||0))];
+  const lib=vals.length===1?tr('tol_val',{m:vals[0]}):tr('tol_var');
+  return `<button type="button" class="chip tolc" onclick="editeurTol()" title="${escH(tr('tol_info'))}">⏱ ${escH(tr('tol_lib'))} : <b>${escH(lib)}</b></button>`;
+}
+function editeurTol(){
+  const L=sitesTolGerables();
+  ouvrirModal(`<h3>${escH(tr('tol_titre'))}</h3><div class="fhint" style="margin-bottom:12px">${escH(tr('tol_info'))}</div>
+    ${L.map(s=>`<div class="fld tolr"><label for="tol-${s.id}">${escH(s.nom)}</label><div class="tolin"><span>±</span><input type="number" id="tol-${s.id}" data-s="${s.id}" min="0" max="120" step="5" value="${+s.tolleranza_min||0}"><span>${escH(tr('tol_min_j'))}</span></div></div>`).join('')}
+    <div class="ferr hidden" id="tol-err"></div>
+    <div class="mact"><span class="sp"></span><button class="btn ghost sm" onclick="fermerModal()">${escH(tr('cancel'))}</button><button class="btn sm" id="tol-ok" onclick="sauverTol()">${escH(tr('save'))}</button></div>`);
+}
+async function sauverTol(){
+  const ch=$$('.tolr input').map(i=>({id:i.dataset.s,v:Math.round(+i.value)})).filter(x=>(+(S.sitiById[x.id]||{}).tolleranza_min||0)!==x.v);
+  if(ch.some(x=>!(x.v>=0&&x.v<=120))) return ferr('#tol-err',tr('tol_err'));
+  return avecBouton('#tol-ok',async()=>{
+    for(const x of ch){
+      const {error}=await sb.rpc('ore_tolleranza',{p_sito:x.id,p_min:x.v});
+      if(error) return ferr('#tol-err',msgErreur(error));
+      const s=S.sitiById[x.id]; if(s) s.tolleranza_min=x.v;
+    }
+    toast(tr('r_saved')); fermerModal();
+    if(S.view==='valider') renderValidation();
+  });
+}
 function renderSites(){
-  $('#pa-body').innerHTML=`<div class="panel np"><div class="tablewrap"><table class="t"><thead><tr><th>Codice</th><th>${escH(tr('f_nom'))}</th><th>${escH(tr('pa_pays'))}</th><th>${escH(tr('pa_fuseau'))}</th><th class="num">${escH(tr('k_pers'))}</th><th>${escH(tr('col_stato'))}</th></tr></thead><tbody>`
-    +S.siti.map(s=>`<tr class="click" onclick="editeurSite('${s.id}')"><td><b>${escH(s.codice)}</b></td><td>${escH(s.nome)}</td><td>${escH(s.paese)}</td><td>${escH(s.fuso)}</td>
+  $('#pa-body').innerHTML=`<div class="panel np"><div class="tablewrap"><table class="t"><thead><tr><th>Codice</th><th>${escH(tr('f_nom'))}</th><th>${escH(tr('pa_pays'))}</th><th>${escH(tr('pa_fuseau'))}</th><th class="num">${escH(tr('tol_lib'))}</th><th class="num">${escH(tr('k_pers'))}</th><th>${escH(tr('col_stato'))}</th></tr></thead><tbody>`
+    +S.siti.map(s=>`<tr class="click" onclick="editeurSite('${s.id}')"><td><b>${escH(s.codice)}</b></td><td>${escH(s.nome)}</td><td>${escH(s.paese)}</td><td>${escH(s.fuso)}</td><td class="num">±${+s.tolleranza_min||0} min</td>
       <td class="num">${S.persList.filter(p=>p.sito_id===s.id).length}</td><td><span class="st ${s.attivo?'on':'off'}">${escH(tr(s.attivo?'st_actif':'st_inactif'))}</span></td></tr>`).join('')
     +'</tbody></table></div></div>';
 }
@@ -3777,6 +4085,58 @@ function initialsOf(s){
   return (parts[0][0]+parts[1][0]).toUpperCase();
 }
 function avatarColor(s){let h=0;const x=String(s||'');for(let i=0;i<x.length;i++)h=(h*31+x.charCodeAt(i))%360;return `hsl(${h},42%,38%)`;}
+// ---- « Voir comme » : l'administrateur voit l'outil exactement comme une autre personne (menus, pages, donnees), en lecture seule ----
+const vraiAdmin=()=>S.vrai?S.vrai.role==='ADMIN':S.role==='ADMIN';
+function drapeauxRole(){
+  S.isAdmin=S.role==='ADMIN'; S.isRH=['ADMIN','HR'].includes(S.role); S.isGest=['ADMIN','HR','MANAGER','RESP_SITO'].includes(S.role);
+  S.siteFiltre=S.role==='RESP_SITO'?((S.pers[S.uid]||{}).sito_id||''):'';
+}
+function choisirVoirComme(){
+  const L=S.persList.filter(p=>p.attivo!==false&&p.user_id!==(S.vrai?S.vrai.uid:S.uid))
+    .sort((a,b)=>String(a.ruolo).localeCompare(String(b.ruolo))||a.nome.localeCompare(b.nome));
+  const ligne=p=>`<button type="button" class="vc-p${p.user_id===S.uid&&S.vrai?' on':''}" data-u="${p.user_id}" data-q="${escH((p.nome+' '+libRole(p.ruolo)+' '+nomSite(p.sito_id)).toLowerCase())}">
+      <span class="av" style="background:${avatarColor(p.email||p.nome)}">${escH(initialsOf(p.nome))}</span>
+      <span class="nm"><b>${escH(p.nome)}</b><small>${escH(libRole(p.ruolo))}${p.sito_id?' · '+escH(nomSite(p.sito_id)):''}</small></span></button>`;
+  ouvrirModal(`<h3>${escH(tr('vc_titre'))}</h3><div class="fhint" style="margin-bottom:10px">${escH(tr('vc_info'))}</div>
+    <input type="search" id="vc-q" placeholder="${escH(tr('vc_cherche'))}" autocomplete="off" style="width:100%;margin-bottom:10px">
+    <div class="vc-list">${L.map(ligne).join('')}</div>
+    <div class="mact"><span class="sp"></span>${S.vrai?`<button class="btn ghost sm" onclick="quitterVoirComme()">${escH(tr('vc_quitter'))}</button>`:''}<button class="btn ghost sm" onclick="fermerModal()">${escH(tr('cancel'))}</button></div>`);
+  const q=$('#vc-q'); q.focus();
+  q.addEventListener('input',()=>{const v=q.value.trim().toLowerCase();$$('.vc-list .vc-p').forEach(b=>b.classList.toggle('hidden',!!v&&!b.dataset.q.includes(v)));});
+  $$('.vc-list .vc-p').forEach(b=>b.onclick=()=>voirComme(b.dataset.u));
+}
+async function voirComme(uid){
+  const p=S.pers[uid]; if(!p) return;
+  await flushRip();
+  if(!S.vrai) S.vrai={uid:S.uid,role:S.role,nom:S.nom,email:S.email};
+  if(uid===S.vrai.uid) return quitterVoirComme();
+  window.VOIR_COMME=p.nome;
+  S.uid=uid; S.role=p.ruolo; S.nom=p.nome; S.email=p.email||'';
+  await changerIdentite();
+}
+async function quitterVoirComme(){
+  if(!S.vrai){fermerModal();return;}
+  Object.assign(S,{uid:S.vrai.uid,role:S.vrai.role,nom:S.vrai.nom,email:S.vrai.email}); S.vrai=null; window.VOIR_COMME=null;
+  await changerIdentite();
+}
+async function changerIdentite(){
+  fermerModal(); drapeauxRole();
+  S.jour=aujourdhui(); S.ouverte=null; S.timbr=[]; S.rip=[]; S.sem=null; S.recap.d=null;
+  try{await chargerRecents();}catch(e){}
+  initProj(); appliquerMode(); renderUser(); renderVoirComme();
+  chargerBadge();
+  allerA('jour');
+}
+function renderVoirComme(){
+  $('#vc-btn').classList.toggle('hidden',!vraiAdmin());
+  const b=$('#vc-bandeau');
+  if(!S.vrai){b.classList.add('hidden');b.innerHTML='';document.documentElement.classList.remove('vc');return;}
+  const p=S.pers[S.uid]||{};
+  b.innerHTML=`<span class="ic" aria-hidden="true">👁</span><span class="tx">${escH(tr('vc_bandeau',{n:'§'})).replace('§',`<b>${escH(S.nom)}</b>`)}
+    <small>${escH(libRole(S.role))}${p.sito_id?' · '+escH(nomSite(p.sito_id)):''} · ${escH(tr('vc_ro'))}</small></span>
+    <button class="btn ghost sm" onclick="choisirVoirComme()">${escH(tr('vc_changer'))}</button><button class="btn sm" onclick="quitterVoirComme()">${escH(tr('vc_quitter'))}</button>`;
+  b.classList.remove('hidden'); document.documentElement.classList.add('vc');
+}
 function renderUser(){
   $('#user-name').textContent=S.nom;$('#user-role').textContent=libRole(S.role);
   [$('#user-avatar'),$('#mtop-avatar')].forEach(a=>{a.textContent=initialsOf(S.nom);a.style.background=avatarColor(S.email||S.nom);});
@@ -3944,7 +4304,7 @@ async function entrer(session){
   if(S.role==='RESP_SITO') S.siteFiltre=(S.pers[S.uid]||{}).sito_id||'';
   appliquerMode();
   $('#side-logo').innerHTML=easeLogo(30);$('#mtop-logo').innerHTML=easeLogo(18);
-  renderUser(); monterCompte(); majTitreTel();
+  renderUser(); monterCompte(); majTitreTel(); renderVoirComme();
   $('#auth').classList.add('hidden');gate.classList.add('hidden');$('#content').classList.remove('hidden');
   chargerBadge();
   await rafraichirJour();
